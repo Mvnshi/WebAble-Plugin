@@ -1,0 +1,473 @@
+:root {
+  --wa-bg: #0B1220;
+  --wa-bg-2: #0E1525;
+  --wa-surface: #131C2E;
+  --wa-surface-hi: #182238;
+  --wa-accent: #2F80FF;
+  --wa-accent-soft: rgba(47,128,255,0.16);
+  --wa-success: #1FCB8A;
+  --wa-amber: #F2B340;
+  --wa-red: #E5484D;
+  --wa-text: #F4F6FA;
+  --wa-text-2: #9AA4B8;
+  --wa-text-3: #6B768F;
+  --wa-border: rgba(255,255,255,0.06);
+  --wa-border-hi: rgba(255,255,255,0.12);
+  --wa-border-active: rgba(47,128,255,0.40);
+  --wa-tint: rgba(255,255,255,0.04);
+  --wa-tint-hi: rgba(255,255,255,0.06);
+  --wa-tint-2: rgba(255,255,255,0.08);
+  --wa-shade: rgba(0,0,0,0.18);
+  --wa-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --wa-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+html.webable-theme-light {
+  --wa-bg:           #FFFFFF;
+  --wa-bg-2:         #F5F7FB;
+  --wa-surface:      #F8FAFD;
+  --wa-surface-hi:   #EEF2F8;
+  --wa-text:         #0B1220;
+  --wa-text-2:       #4A5876;
+  --wa-text-3:       #8A93A8;
+  --wa-border:       rgba(11,18,32,0.08);
+  --wa-border-hi:    rgba(11,18,32,0.16);
+  --wa-tint:         rgba(11,18,32,0.04);
+  --wa-tint-hi:      rgba(11,18,32,0.06);
+  --wa-tint-2:       rgba(11,18,32,0.08);
+  --wa-shade:        rgba(11,18,32,0.04);
+}
+html.webable-theme-light body { background: #FFFFFF; }
+html.webable-theme-light .ana-sev-critical .ana-issue-pill { color: #B91C1C; background: rgba(229,72,77,0.06); border-color: rgba(229,72,77,0.32); }
+html.webable-theme-light .ana-sev-serious  .ana-issue-pill { color: #C53030; }
+html.webable-theme-light .ana-sev-moderate .ana-issue-pill { color: #B7791F; }
+html.webable-theme-light .ana-sev-passing  .ana-issue-pill { color: #0E8A5C; }
+
+html.webable-brand-green   { --wa-accent: #1FCB8A; --wa-accent-soft: rgba(31,203,138,0.16); --wa-border-active: rgba(31,203,138,0.40); }
+html.webable-brand-purple  { --wa-accent: #A574FF; --wa-accent-soft: rgba(165,116,255,0.16); --wa-border-active: rgba(165,116,255,0.40); }
+html.webable-brand-mono    { --wa-accent: #6B768F; --wa-accent-soft: rgba(107,118,143,0.16); --wa-border-active: rgba(107,118,143,0.40); }
+
+* { box-sizing: border-box; }
+.mono { font-family: var(--wa-mono); font-variant-numeric: tabular-nums; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--wa-bg);
+  color: var(--wa-text);
+  font-family: var(--wa-font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ana-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 40px 28px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ana-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--wa-border);
+}
+.ana-brand { display: flex; gap: 12px; align-items: center; }
+.ana-brand-mark {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  background: var(--wa-accent-soft);
+  border: 1px solid var(--wa-border-active);
+  color: var(--wa-accent);
+  border-radius: 10px;
+}
+.ana-brand-name { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.ana-brand-sub { font-size: 12px; color: var(--wa-text-2); }
+.ana-version { font-size: 11px; color: var(--wa-text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.ana-card {
+  background: var(--wa-surface);
+  border: 1px solid var(--wa-border);
+  border-radius: 14px;
+  padding: 22px 26px;
+}
+.ana-input-card h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.ana-input-card p {
+  margin: 0 0 8px;
+  color: var(--wa-text-2);
+  max-width: 70ch;
+}
+.ana-input-card p strong { color: var(--wa-text); font-weight: 500; }
+.ana-disclaim {
+  margin-top: 8px !important;
+  padding: 10px 14px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-left: 2px solid var(--wa-amber);
+  border-radius: 6px;
+  font-size: 13px;
+}
+.ana-disclaim em { color: var(--wa-amber); font-style: normal; font-weight: 500; }
+
+.ana-cta-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.ana-btn {
+  font-family: var(--wa-font);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 16px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  color: var(--wa-text);
+  cursor: pointer;
+  transition: border-color 80ms, background 80ms;
+}
+.ana-btn:hover { border-color: var(--wa-border-hi); }
+.ana-btn-primary {
+  background: var(--wa-accent);
+  border-color: var(--wa-accent);
+  color: #fff;
+}
+.ana-btn-primary:hover { filter: brightness(1.08); }
+.ana-btn-ghost { background: transparent; }
+
+.ana-paste {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ana-paste textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 10px 12px;
+  font-family: var(--wa-mono);
+  font-size: 12px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  color: var(--wa-text);
+  resize: vertical;
+}
+.ana-paste textarea:focus, .ana-paste input:focus {
+  outline: none;
+  border-color: var(--wa-border-active);
+  box-shadow: 0 0 0 3px rgba(47,128,255,0.16);
+}
+.ana-paste-row {
+  display: flex;
+  gap: 8px;
+}
+.ana-paste-row input {
+  flex: 1;
+  font-family: var(--wa-mono);
+  font-size: 12px;
+  padding: 9px 12px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  color: var(--wa-text);
+}
+
+/* ─── Results ───────────────────────────────────────────────── */
+.ana-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ana-summary {
+  background: var(--wa-surface);
+  border: 1px solid var(--wa-border);
+  border-radius: 14px;
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.ana-gauge {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+}
+.ana-gauge-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.ana-gauge-score { font-size: 38px; font-weight: 500; line-height: 1; }
+.ana-gauge-out { font-size: 12px; color: var(--wa-text-3); margin-top: 4px; letter-spacing: 0.04em; }
+.ana-sum-meta { flex: 1; min-width: 0; }
+.ana-sum-title { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+.ana-sum-sub { font-size: 12px; color: var(--wa-text-2); margin: 4px 0 12px; }
+.ana-cats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.ana-cat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+}
+.ana-cat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.ana-cat-key { font-size: 10px; color: var(--wa-text-2); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--wa-mono); }
+.ana-cat-val { font-size: 16px; font-weight: 500; }
+.ana-cat-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--wa-tint-hi);
+  overflow: hidden;
+}
+.ana-cat-bar > span { display: block; height: 100%; border-radius: 999px; }
+
+/* Tabs */
+.ana-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--wa-border);
+  padding: 0 4px;
+}
+.ana-tab {
+  font-family: var(--wa-font);
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  color: var(--wa-text-2);
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ana-tab:hover { color: var(--wa-text); }
+.ana-tab.is-active {
+  color: var(--wa-text);
+  border-bottom-color: var(--wa-accent);
+}
+.ana-tab-count {
+  font-family: var(--wa-mono);
+  font-size: 10px;
+  background: var(--wa-tint);
+  border: 1px solid var(--wa-border);
+  padding: 1px 6px;
+  border-radius: 999px;
+  color: var(--wa-text-2);
+}
+
+/* Issues */
+.ana-issues { display: flex; flex-direction: column; gap: 10px; }
+.ana-issue {
+  background: var(--wa-surface);
+  border: 1px solid var(--wa-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.ana-issue-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.ana-issue-pill {
+  font-family: var(--wa-mono);
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--wa-tint);
+  border: 1px solid var(--wa-border);
+}
+.ana-sev-critical .ana-issue-pill { background: rgba(229,72,77,0.10); border-color: rgba(229,72,77,0.32); color: #F08086; }
+.ana-sev-serious  .ana-issue-pill { background: rgba(229,72,77,0.06); border-color: rgba(229,72,77,0.20); color: #ED9295; }
+.ana-sev-moderate .ana-issue-pill { background: rgba(242,179,64,0.10); border-color: rgba(242,179,64,0.32); color: var(--wa-amber); }
+.ana-sev-minor    .ana-issue-pill { background: var(--wa-tint); color: var(--wa-text-2); }
+.ana-sev-passing  .ana-issue-pill { background: rgba(31,203,138,0.10); border-color: rgba(31,203,138,0.32); color: var(--wa-success); }
+.ana-issue-title { font-size: 14px; font-weight: 500; flex: 1; }
+.ana-issue-count {
+  font-family: var(--wa-mono);
+  font-size: 10px;
+  color: var(--wa-text-2);
+  background: var(--wa-bg-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--wa-border);
+}
+.ana-issue-rule {
+  font-family: var(--wa-mono);
+  font-size: 10px;
+  color: var(--wa-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.ana-issue-row {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--wa-text-2);
+  margin-top: 4px;
+  line-height: 1.55;
+}
+.ana-issue-key {
+  font-family: var(--wa-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--wa-text-3);
+  width: 90px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.ana-issue-fix code {
+  font-family: var(--wa-mono);
+  font-size: 12px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.ana-issue-snippets {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--wa-border);
+}
+.ana-issue-snippets summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--wa-text-2);
+  font-family: var(--wa-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.ana-issue-snip {
+  font-family: var(--wa-mono);
+  font-size: 11px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  color: var(--wa-text-2);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.ana-foot {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0 0;
+}
+
+.ana-helper p {
+  color: var(--wa-text-2);
+  margin: 0;
+}
+.ana-helper p strong { color: var(--wa-text); font-weight: 500; }
+.ana-card-title { margin: 0 0 8px; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+
+.ana-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--wa-text-3);
+  font-size: 12px;
+  border: 1px dashed var(--wa-border);
+  border-radius: 8px;
+}
+
+.ana-snip-row { display: flex; gap: 8px; align-items: flex-start; margin-top: 6px; }
+.ana-snip-row .ana-issue-snip { flex: 1; margin-top: 0; }
+.ana-btn-mini { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
+.ana-btn-ai {
+  background: linear-gradient(135deg, #2F80FF, #A574FF);
+  border-color: rgba(165,116,255,0.4);
+  color: #fff;
+}
+.ana-btn-ai:hover { filter: brightness(1.08); }
+.ana-btn-ai[disabled] { opacity: 0.6; cursor: wait; }
+
+.ana-shimmer {
+  height: 38px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--wa-tint), var(--wa-tint-hi), var(--wa-tint));
+  background-size: 400% 100%;
+  border: 1px solid var(--wa-border);
+  animation: ana-shimmer 1.2s linear infinite;
+  margin-bottom: 8px;
+}
+@keyframes ana-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.ana-ai-guide-body {
+  padding: 16px 20px;
+  background: var(--wa-bg-2);
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--wa-text);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.ana-ai-guide-body h2 { font-size: 16px; margin: 18px 0 6px; font-weight: 500; letter-spacing: -0.01em; padding-top: 12px; border-top: 1px solid var(--wa-border); }
+.ana-ai-guide-body h2:first-child { border-top: none; padding-top: 0; }
+.ana-ai-guide-body h3 { font-size: 14px; margin: 14px 0 6px; font-weight: 500; }
+.ana-ai-guide-body h4 { font-size: 13px; margin: 10px 0 4px; font-weight: 500; color: var(--wa-text-2); }
+.ana-ai-guide-body p { margin: 4px 0 8px; color: var(--wa-text-2); }
+.ana-ai-guide-body strong { color: var(--wa-text); font-weight: 500; }
+.ana-ai-guide-body ul { margin: 6px 0 10px; padding-left: 20px; color: var(--wa-text-2); }
+.ana-ai-guide-body code {
+  font-family: var(--wa-mono);
+  font-size: 11px;
+  background: var(--wa-tint);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--wa-border);
+}
+.ana-md-pre {
+  background: var(--wa-bg);
+  border: 1px solid var(--wa-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 6px 0 10px;
+  overflow-x: auto;
+}
+.ana-md-pre code {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  .ana-head, .ana-input-card, .ana-tabs, .ana-foot, .ana-helper { display: none !important; }
+}

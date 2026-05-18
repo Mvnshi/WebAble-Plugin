@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Riverside Community Skills Initiative — Free job training that works</title>
+  <!-- Intentionally no meta description so Site Check has something to flag -->
+  <style>
+    :root {
+      --ink: #1a2233;
+      --ink-2: #4a5876;
+      --ink-3: #8a93a8;
+      --paper: #fbf8f1;
+      --paper-2: #f3eee2;
+      --line: #e1dccd;
+      --green: #2e6b4a;
+      --green-soft: #dde9e1;
+      --gold: #b88532;
+      --rust: #a14a2a;
+      --serif: 'Charter', 'Iowan Old Style', 'Georgia', 'Times New Roman', serif;
+      --sans: 'Helvetica Neue', 'Arial', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--green); }
+
+    /* Header */
+    .site-head {
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .site-head-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--paper);
+      display: grid;
+      place-items: center;
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .logo-text { font-weight: 600; }
+    .logo-text small { display: block; font-weight: 400; color: var(--ink-2); font-size: 11px; }
+    nav.main-nav {
+      flex: 1;
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+    nav.main-nav a { color: var(--ink); text-decoration: none; }
+    nav.main-nav a:hover { color: var(--green); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      background: var(--green);
+      color: var(--paper);
+      border-radius: 4px;
+      text-decoration: none;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Top utility strip */
+    .util-strip {
+      background: var(--ink);
+      color: var(--paper-2);
+      font-family: var(--sans);
+      font-size: 12px;
+    }
+    .util-strip-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6px 24px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Hero */
+    .hero {
+      background:
+        radial-gradient(circle at 20% 80%, rgba(46, 107, 74, 0.06), transparent 50%),
+        var(--paper-2);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 24px 48px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: 44px;
+      line-height: 1.1;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 18px;
+      letter-spacing: -0.01em;
+    }
+    .hero p.lead {
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--ink-2);
+      margin: 0 0 24px;
+    }
+    .hero-cta-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    /* Intentionally vague button — will get flagged */
+    .hero-cta-row .btn-vague {
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 18px;
+      background: var(--green);
+      color: var(--paper);
+      text-decoration: none;
+      border: none;
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .hero-cta-row .btn-text {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--green);
+      text-decoration: underline;
+    }
+
+    .hero-img {
+      aspect-ratio: 4 / 3;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #d9c8a6 0%, #b6a37a 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 32px -16px rgba(0,0,0,0.3);
+    }
+    .hero-img svg.illus {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Stats strip */
+    .stats {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    .stats-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      font-family: var(--sans);
+      text-align: center;
+    }
+    .stat .v {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .stat .k {
+      font-size: 12px;
+      color: rgba(251, 248, 241, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* Recent graduates strip */
+    .grads-strip {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+    .grads-strip-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+    .grads-strip-head h4 {
+      font-family: var(--serif);
+      font-size: 20px;
+      margin: 0 0 4px;
+      font-weight: 700;
+    }
+    .grads-strip-head p {
+      margin: 0;
+      color: var(--ink-2);
+      font-size: 14px;
+    }
+    .grads-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+    .grads-grid img {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      display: block;
+      border: 1px solid var(--line);
+    }
+
+    /* Programs (heading skips h2 → h3 intentionally) */
+    .programs {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+    .programs h3 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+    .programs .sub {
+      color: var(--ink-2);
+      margin: 0 0 28px;
+      font-size: 16px;
+    }
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .program {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .program-img {
+      aspect-ratio: 4 / 3;
+      position: relative;
+      overflow: hidden;
+    }
+    .program-img svg { width: 100%; height: 100%; display: block; }
+    .program-body {
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .program h4 {
+      font-family: var(--serif);
+      font-size: 18px;
+      margin: 0 0 6px;
+      font-weight: 700;
+    }
+    .program p {
+      font-size: 14px;
+      color: var(--ink-2);
+      margin: 0 0 12px;
+      flex: 1;
+      line-height: 1.55;
+    }
+    .program a.vague {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--green);
+      text-decoration: none;
+    }
+    .program a.vague:hover { text-decoration: underline; }
+
+    /* Story (with H2 and ad-blocks) */
+    .story-wrap {
+      background: var(--paper-2);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .story {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 24px;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 40px;
+      align-items: start;
+    }
+    .story h2 {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+    .story-byline {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0 0 24px;
+    }
+    .story-img-main {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .story-credit {
+      margin: 0 0 24px;
+      color: var(--ink-3);
+      font-size: 13px;
+      font-style: italic;
+    }
+    .story p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--ink);
+      margin: 0 0 18px;
+    }
+    .story p.dropcap::first-letter {
+      font-size: 56px;
+      float: left;
+      line-height: 0.9;
+      padding: 6px 8px 0 0;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .pull-quote {
+      font-family: var(--serif);
+      font-size: 22px;
+      line-height: 1.4;
+      font-style: italic;
+      color: var(--ink);
+      border-left: 3px solid var(--green);
+      padding: 4px 0 4px 20px;
+      margin: 28px 0;
+      max-width: 90%;
+    }
+    .read-more-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+    }
+    .btn-vague-2 {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--green);
+      background: transparent;
+      border: 1px solid var(--green);
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Sidebar ads — decorative-only, will be hidden by Safe Simplify */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .ad-block {
+      background: linear-gradient(180deg, var(--gold), #946712);
+      color: var(--paper);
+      padding: 20px;
+      border-radius: 6px;
+      font-family: var(--sans);
+      text-align: center;
+      box-shadow: 0 4px 12px -6px rgba(0,0,0,0.2);
+    }
+    .ad-block.alt { background: linear-gradient(180deg, var(--rust), #6e2e16); }
+    .ad-block .small { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.85; }
+    .ad-block .big { font-family: var(--serif); font-size: 22px; font-weight: 700; margin: 6px 0; line-height: 1.15; }
+    .ad-block .tiny { font-size: 12px; opacity: 0.85; }
+
+    /* Apply CTA section — primary action below the fold */
+    .apply-strip {
+      background: var(--green);
+      color: var(--paper);
+    }
+    .apply-strip-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: center;
+    }
+    .apply-strip h3 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
+    .apply-strip p { margin: 0; opacity: 0.85; font-size: 15px; }
+    .apply-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--paper);
+      color: var(--green);
+      padding: 14px 24px;
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Contact form — 11 fields, several unlabeled */
+    .contact-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+    .contact-wrap h3 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+    .contact-wrap p.sub { color: var(--ink-2); margin: 0 0 24px; max-width: 60ch; }
+    form.contact-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      max-width: 720px;
+    }
+    form.contact-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+    form.contact-form input,
+    form.contact-form select,
+    form.contact-form textarea {
+      font-family: var(--serif);
+      font-size: 15px;
+      padding: 10px 12px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+    }
+    form.contact-form .full { grid-column: 1 / -1; }
+    form.contact-form textarea { min-height: 96px; resize: vertical; }
+    /* The unlabeled inputs — placeholder only */
+    form.contact-form .raw {
+      font-family: var(--serif);
+      font-size: 15px;
+      padding: 10px 12px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+    }
+    .submit-row {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .submit-row button {
+      font-family: var(--sans);
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+    .submit-row .btn-primary {
+      background: var(--green);
+      color: var(--paper);
+    }
+    .submit-row .btn-secondary {
+      background: transparent;
+      color: var(--ink-2);
+      border: 1px solid var(--line);
+    }
+
+    /* Footer */
+    footer.site-foot {
+      background: var(--ink);
+      color: rgba(251, 248, 241, 0.72);
+      padding: 32px 24px;
+      font-family: var(--sans);
+      font-size: 13px;
+    }
+    footer.site-foot .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 24px;
+    }
+    footer.site-foot h5 {
+      font-family: var(--serif);
+      color: var(--paper);
+      font-size: 14px;
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+    footer.site-foot ul { list-style: none; padding: 0; margin: 0; }
+    footer.site-foot a { color: rgba(251, 248, 241, 0.72); text-decoration: none; }
+    footer.site-foot a:hover { color: var(--paper); text-decoration: underline; }
+    .copyright {
+      max-width: 1100px;
+      margin: 24px auto 0;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: rgba(251, 248, 241, 0.5);
+    }
+
+    /* Decorative pre-footer banner */
+    .donate-banner {
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, #f0e7d0, #e3d6b1);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 20px;
+    }
+    .donate-banner h4 { margin: 0 0 4px; font-family: var(--serif); font-size: 20px; }
+    .donate-banner p { margin: 0; color: var(--ink-2); font-size: 14px; }
+    .donate-banner button {
+      font-family: var(--sans);
+      font-size: 13px;
+      padding: 10px 18px;
+      background: var(--rust);
+      color: var(--paper);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner, .program-grid, .story, footer.site-foot .inner, form.contact-form { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="util-strip">
+    <div class="util-strip-inner">
+      <span>Spring 2026 enrollment is open · Classes start May 18</span>
+      <span>(503) 555-0182 · info@riverside-skills.org</span>
+    </div>
+  </div>
+
+  <header class="site-head">
+    <div class="site-head-inner">
+      <a class="logo" href="#">
+        <span class="logo-mark">R</span>
+        <span class="logo-text">
+          Riverside Community
+          <small>Skills Initiative</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="#programs">Programs</a>
+        <a href="#how-to-apply">How to Apply</a>
+        <a href="#story">Stories</a>
+        <a href="#contact">Contact</a>
+        <a href="#donate">Donate</a>
+      </nav>
+      <a class="nav-cta" href="#how-to-apply">Apply now</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h1>Free job training for adults rebuilding their careers.</h1>
+        <p class="lead">Hands-on programs in culinary arts, healthcare, IT, and skilled trades. Tuition-free for residents of Multnomah County. No prerequisites — just show up.</p>
+        <div class="hero-cta-row">
+          <!-- intentionally vague for the demo -->
+          <button class="btn-vague" type="button">Click here</button>
+          <a class="btn-text" href="#story">Read Maria's story →</a>
+        </div>
+      </div>
+      <!-- intentionally missing alt -->
+      <div class="hero-img" role="img">
+        <svg class="illus" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="400" height="300" fill="url(#hg)"/>
+          <defs>
+            <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#d9c8a6"/>
+              <stop offset="100%" stop-color="#a99066"/>
+            </linearGradient>
+          </defs>
+          <!-- abstract: window, three figures at a counter -->
+          <rect x="40" y="40" width="320" height="160" fill="#fbf8f1" opacity="0.55" rx="4"/>
+          <rect x="56" y="56" width="148" height="128" fill="none" stroke="#fbf8f1" stroke-width="2" opacity="0.6"/>
+          <rect x="212" y="56" width="132" height="128" fill="none" stroke="#fbf8f1" stroke-width="2" opacity="0.6"/>
+          <rect x="0" y="220" width="400" height="80" fill="#3a3022" opacity="0.5"/>
+          <!-- silhouettes -->
+          <g fill="#1f1a13">
+            <circle cx="120" cy="200" r="22"/>
+            <rect x="100" y="218" width="42" height="50" rx="6"/>
+            <circle cx="200" cy="196" r="20"/>
+            <rect x="182" y="212" width="38" height="56" rx="6"/>
+            <circle cx="280" cy="204" r="22"/>
+            <rect x="260" y="222" width="42" height="50" rx="6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="grads-strip" aria-label="Recent graduates">
+    <div class="grads-strip-inner">
+      <div class="grads-strip-head">
+        <h4>Recent graduates</h4>
+        <p>Class of Winter 2026 — placed within 90 days.</p>
+      </div>
+      <div class="grads-grid">
+        <!-- Mix of alt / no alt — for Site Check to find -->
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23a99066'/><circle cx='60' cy='44' r='22' fill='%23f0e2c0'/><rect x='32' y='66' width='56' height='60' rx='10' fill='%23fbf8f1'/></svg>" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%232e6b4a'/><circle cx='60' cy='44' r='22' fill='%23dde9e1'/><rect x='32' y='66' width='56' height='60' rx='10' fill='%23fbf8f1'/></svg>" alt="Marcus Webb, IT Support graduate, helpdesk at OHSU" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23a14a2a'/><circle cx='60' cy='44' r='22' fill='%23f0e2c0'/><rect x='32' y='66' width='56' height='60' rx='10' fill='%23fbf8f1'/></svg>" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%231a2233'/><circle cx='60' cy='44' r='22' fill='%23f0e2c0'/><rect x='32' y='66' width='56' height='60' rx='10' fill='%23fbf8f1'/></svg>" alt="Tomas Reyes, Skilled Trades graduate, IBEW Local 48" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23b88532'/><circle cx='60' cy='44' r='22' fill='%23dde9e1'/><rect x='32' y='66' width='56' height='60' rx='10' fill='%23fbf8f1'/></svg>" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%233d4a5e'/><circle cx='60' cy='44' r='22' fill='%23f0e2c0'/><rect x='32' y='66' width='56' height='60' rx='10' fill='%23fbf8f1'/></svg>" />
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="By the numbers">
+    <div class="stats-inner">
+      <div class="stat"><div class="v">87%</div><div class="k">Graduates placed within 90 days</div></div>
+      <div class="stat"><div class="v">2,400+</div><div class="k">Adults trained since 2014</div></div>
+      <div class="stat"><div class="v">$0</div><div class="k">Cost to eligible residents</div></div>
+      <div class="stat"><div class="v">12 weeks</div><div class="k">Average program length</div></div>
+    </div>
+  </section>
+
+  <!-- Skipping H2 here intentionally — heading hierarchy violation -->
+  <section class="programs" id="programs">
+    <h3>Our Programs</h3>
+    <p class="sub">Built with employers who actually hire our graduates.</p>
+    <div class="program-grid">
+      <article class="program">
+        <div class="program-img">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
+            <rect width="200" height="150" fill="#3a4a3a"/>
+            <rect x="0" y="100" width="200" height="50" fill="#2c3a2c"/>
+            <circle cx="58" cy="74" r="16" fill="#f0e2c0"/>
+            <rect x="42" y="86" width="32" height="40" rx="4" fill="#fbf8f1"/>
+            <circle cx="120" cy="60" r="14" fill="#f0e2c0"/>
+            <rect x="106" y="70" width="28" height="38" rx="4" fill="#a14a2a"/>
+            <rect x="80" y="105" width="60" height="6" fill="#1a1f10" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="program-body">
+          <h4>Culinary Arts</h4>
+          <p>12 weeks. Cook in a real teaching kitchen with chefs from McMenamins, Higgins, and Le Pigeon.</p>
+          <a class="vague" href="#">Learn more</a>
+        </div>
+      </article>
+
+      <article class="program">
+        <div class="program-img">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="200" height="150" fill="#3d4a5e"/>
+            <rect x="20" y="30" width="160" height="90" rx="4" fill="#fbf8f1" opacity="0.92"/>
+            <rect x="32" y="44" width="60" height="8" fill="#2e6b4a"/>
+            <rect x="32" y="60" width="136" height="4" fill="#cdd7d0"/>
+            <rect x="32" y="70" width="120" height="4" fill="#cdd7d0"/>
+            <rect x="32" y="80" width="92" height="4" fill="#cdd7d0"/>
+            <rect x="32" y="96" width="44" height="14" rx="2" fill="#2e6b4a"/>
+          </svg>
+        </div>
+        <div class="program-body">
+          <h4>Medical Assisting</h4>
+          <p>14 weeks. Phlebotomy, EKG, clinical procedures. Ends with externship at Legacy or OHSU.</p>
+          <a class="vague" href="#">Learn more</a>
+        </div>
+      </article>
+
+      <article class="program">
+        <div class="program-img">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" aria-label="Trainee at desktop computer working on a circuit board">
+            <rect width="200" height="150" fill="#1a2233"/>
+            <rect x="40" y="46" width="120" height="70" rx="3" fill="#0e1525" stroke="#2e6b4a" stroke-width="1.5"/>
+            <line x1="58" y1="64" x2="142" y2="64" stroke="#2e6b4a" stroke-width="1"/>
+            <line x1="58" y1="80" x2="142" y2="80" stroke="#2e6b4a" stroke-width="1"/>
+            <line x1="58" y1="96" x2="100" y2="96" stroke="#2e6b4a" stroke-width="1"/>
+            <rect x="86" y="116" width="28" height="6" fill="#0e1525"/>
+            <rect x="78" y="122" width="44" height="3" fill="#0e1525"/>
+          </svg>
+        </div>
+        <div class="program-body">
+          <h4>IT Support</h4>
+          <p>16 weeks. CompTIA A+ track plus practical helpdesk training. Average starting wage: $22/hr.</p>
+          <a class="vague" href="#">Read more</a>
+        </div>
+      </article>
+
+      <article class="program">
+        <div class="program-img">
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="200" height="150" fill="#5e4632"/>
+            <rect x="0" y="100" width="200" height="50" fill="#3d2c1d"/>
+            <rect x="40" y="40" width="120" height="60" fill="#a14a2a"/>
+            <rect x="50" y="50" width="100" height="40" fill="#7b3015"/>
+            <line x1="55" y1="60" x2="145" y2="60" stroke="#3d2c1d" stroke-width="1"/>
+            <line x1="55" y1="72" x2="145" y2="72" stroke="#3d2c1d" stroke-width="1"/>
+            <line x1="55" y1="84" x2="145" y2="84" stroke="#3d2c1d" stroke-width="1"/>
+            <rect x="100" y="105" width="40" height="6" fill="#1a1208"/>
+          </svg>
+        </div>
+        <div class="program-body">
+          <h4>Skilled Trades</h4>
+          <p>20 weeks. Pre-apprenticeship in carpentry, electrical, or plumbing. Direct path to local 481.</p>
+          <a class="vague" href="#">→</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="story-wrap" id="story">
+    <article class="story">
+      <div>
+        <h2>How Maria's life changed in 12 weeks.</h2>
+        <p class="story-byline">By Aisha Kuria · Updated March 14, 2026</p>
+        <img class="story-img-main" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'><rect width='800' height='450' fill='%23a14a2a'/><rect x='0' y='280' width='800' height='170' fill='%237b3015'/><rect x='0' y='0' width='800' height='80' fill='%237b3015' opacity='0.6'/><circle cx='400' cy='220' r='120' fill='%23f0e2c0'/><rect x='320' y='320' width='160' height='130' rx='20' fill='%23fbf8f1'/><ellipse cx='360' cy='200' rx='14' ry='20' fill='%231f1a13'/><ellipse cx='440' cy='200' rx='14' ry='20' fill='%231f1a13'/><path d='M370 260 Q400 280 430 260' stroke='%237b3015' stroke-width='3' fill='none' stroke-linecap='round'/></svg>" />
+        <p class="story-credit"><em>Photo by Asher Goldman / RCSI · all rights reserved.</em></p>
+        <p class="dropcap">Maria Salinas spent eleven years working two cleaning jobs to send money home to her mother in Oaxaca. The hours were brutal, the wages unstable, and she was tired by 41. "I was tired of being tired," she says now, sitting at the small wooden table in her North Portland apartment. A pot of beans simmers on the stove behind her.</p>
+        <p>In November 2024, a flyer changed things. Stapled to a bulletin board outside the Hollywood library, it advertised a free 12-week culinary training program — tools provided, lunch included, transit pass paid for. Maria laughed at first. "Things that say free are not free," she remembers thinking. But the program coordinator, Wendy Ortiz, called her three times before Maria agreed to come in for an interview.</p>
+        <blockquote class="pull-quote">"They didn't ask what I had done before. They asked what I wanted next. Nobody asks that."</blockquote>
+        <p>By week three, Maria was working a hot line at the program's pop-up restaurant, served from a converted shipping container in the parking lot of the old Madison South YMCA. By week eight, she had a knife she could call her own. By week twelve, she had three job offers — two in restaurants, one as a private chef for a family in Beaverton.</p>
+        <p>She took the family job. The hours are predictable. The pay is $26 an hour, with health insurance and three weeks off. Last summer, she sent her mother enough to fix the roof.</p>
+        <div class="read-more-row">
+          <button type="button" class="btn-vague-2">Continue</button>
+          <button type="button" class="btn-vague-2">Submit</button>
+        </div>
+      </div>
+
+      <aside class="sidebar" aria-label="Promotions">
+        <div class="ad-block">
+          <div class="small">Limited Time</div>
+          <div class="big">Spring cohort fills March 30</div>
+          <div class="tiny">Tuition-free — Multnomah County residents</div>
+        </div>
+        <div class="ad-block alt">
+          <div class="small">Special Offer</div>
+          <div class="big">Refer a friend — get $50</div>
+          <div class="tiny">Both you and your friend receive a stipend on enrollment</div>
+        </div>
+        <div class="ad-block">
+          <div class="small">Did you know?</div>
+          <div class="big">87% of graduates placed within 90 days</div>
+          <div class="tiny">Independent audit, 2024 cohort</div>
+        </div>
+      </aside>
+    </article>
+  </section>
+
+  <section class="apply-strip" id="how-to-apply">
+    <div class="apply-strip-inner">
+      <div>
+        <h3>Apply for the Spring 2026 cohort.</h3>
+        <p>15 minutes to fill out. We get back to everyone within 3 business days.</p>
+      </div>
+      <button type="button" class="apply-cta">Apply Now</button>
+    </div>
+  </section>
+
+  <section class="contact-wrap" id="contact">
+    <h3>Tell us about you.</h3>
+    <p class="sub">We use this to match you with the right program coordinator. Nothing here is shared with third parties.</p>
+    <form class="contact-form" onsubmit="event.preventDefault(); return false;">
+      <label>Full name<input type="text" name="name" required></label>
+      <label>Email<input type="email" name="email" required></label>
+      <!-- intentionally unlabeled -->
+      <input class="raw" type="tel" placeholder="Phone" name="phone" />
+      <input class="raw" type="text" placeholder="Address line 1" name="addr1" />
+      <input class="raw" type="text" placeholder="City" name="city" />
+      <input class="raw" type="text" placeholder="State" name="state" />
+      <input class="raw" type="text" placeholder="ZIP" name="zip" />
+      <label>Date of birth<input type="date" name="dob" /></label>
+      <label>What's your goal?
+        <select name="goal">
+          <option>Choose one</option>
+          <option>Career change</option>
+          <option>Re-entering the workforce</option>
+          <option>First job in the U.S.</option>
+          <option>Skill upgrade</option>
+        </select>
+      </label>
+      <label>How did you hear about us?
+        <select name="hear">
+          <option>Choose one</option>
+          <option>Friend or family</option>
+          <option>Library flyer</option>
+          <option>Caseworker</option>
+          <option>Search engine</option>
+          <option>Social media</option>
+        </select>
+      </label>
+      <label class="full">Anything you'd like us to know?<textarea name="message"></textarea></label>
+      <div class="submit-row">
+        <button type="submit" class="btn-primary">Submit</button>
+        <button type="button" class="btn-secondary">Save draft</button>
+      </div>
+    </form>
+  </section>
+
+  <div class="donate-banner" id="donate">
+    <div>
+      <h4>Spring matching grant — every dollar doubles.</h4>
+      <p>A local family foundation is matching gifts up to $50,000 through April 30. Help us reach the line.</p>
+    </div>
+    <button type="button">Donate today</button>
+  </div>
+
+  <footer class="site-foot">
+    <div class="inner">
+      <div>
+        <h5>Riverside Community Skills Initiative</h5>
+        <p style="margin:0; max-width: 36ch;">A 501(c)(3) workforce program serving Multnomah and Clackamas counties since 2014.</p>
+      </div>
+      <div>
+        <h5>Programs</h5>
+        <ul>
+          <li><a href="#">Culinary Arts</a></li>
+          <li><a href="#">Medical Assisting</a></li>
+          <li><a href="#">IT Support</a></li>
+          <li><a href="#">Skilled Trades</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>About</h5>
+        <ul>
+          <li><a href="#">Our team</a></li>
+          <li><a href="#">Annual report</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Get involved</h5>
+        <ul>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="#">Donate</a></li>
+          <li><a href="#">Hire a graduate</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      © 2026 Riverside Community Skills Initiative · 4823 NE Cully Blvd, Portland OR 97218 · EIN 47-2918334
+    </div>
+  </footer>
+
+</body>
+</html>

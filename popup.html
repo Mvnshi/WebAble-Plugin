@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WebAble</title>
+  <link rel="stylesheet" href="popup.css" />
+  <script src="wa-theme.js"></script>
+</head>
+<body>
+  <div class="wa-popup">
+
+    <!-- ─── Default view ──────────────────────────────────────── -->
+    <section id="wa-pop-main">
+      <header class="wa-pop-head">
+        <div class="wa-pop-brand">
+          <span class="wa-pop-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg>
+          </span>
+          <span class="wa-pop-name">WebAble</span>
+          <span class="wa-pop-version mono">v1.2</span>
+        </div>
+        <span class="wa-pop-status" id="wa-pop-status">
+          <span class="wa-pop-dot"></span>
+          <span id="wa-pop-status-text">Loading…</span>
+        </span>
+      </header>
+
+      <p class="wa-pop-pitch">
+        <span class="mono">User-side · Privacy-first</span>
+        <span>Adapts the web to <em>you</em>. Doesn't modify the website for anyone else.</span>
+      </p>
+
+      <button class="wa-pop-cta" id="wa-pop-open">
+        <span class="wa-pop-cta-text">Open WebAble panel</span>
+        <span class="wa-pop-shortcut mono">Ctrl + U</span>
+      </button>
+
+      <button class="wa-pop-analyze" id="wa-pop-analyze">
+        <span class="wa-pop-analyze-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </span>
+        <div class="wa-pop-analyze-text">
+          <span class="wa-pop-analyze-title">Run accessibility scan</span>
+          <span class="wa-pop-analyze-sub">15 WCAG 2.2 heuristics · ~3 seconds</span>
+        </div>
+        <span class="wa-pop-analyze-chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+
+      <button class="wa-pop-side" id="wa-pop-options">
+        <span class="wa-pop-side-mark">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </span>
+        <span>Settings · Brand · Gemini key</span>
+      </button>
+
+      <section class="wa-pop-site">
+        <div class="wa-pop-site-head">
+          <span class="mono">This site · <span id="wa-pop-host">…</span></span>
+        </div>
+        <label class="wa-pop-toggle-row">
+          <span>Always-on for this site</span>
+          <button class="wa-pop-toggle" id="wa-pop-always" aria-pressed="false"><span class="wa-pop-toggle-thumb"></span></button>
+        </label>
+        <label class="wa-pop-toggle-row">
+          <span class="wa-pop-warn">Disable WebAble here</span>
+          <button class="wa-pop-toggle" id="wa-pop-disable" aria-pressed="false"><span class="wa-pop-toggle-thumb"></span></button>
+        </label>
+      </section>
+
+      <footer class="wa-pop-foot">
+        <span class="mono">FTC fined accessiBe $1M for AI-compliance claims (Jan 2026).</span>
+        <span class="wa-pop-foot-strong">We don't pretend to fix websites for you.</span>
+      </footer>
+    </section>
+
+    <!-- ─── Embedded analyzer view ────────────────────────────── -->
+    <section id="wa-pop-ana" hidden>
+      <header class="wa-ana-head">
+        <button class="wa-ana-back" id="wa-ana-back" aria-label="Back to menu">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <div class="wa-ana-title">
+          <div class="wa-ana-title-strong">Site Analyzer</div>
+          <div class="wa-ana-title-sub mono" id="wa-ana-host">scanning…</div>
+        </div>
+        <button class="wa-ana-rerun" id="wa-ana-rerun" aria-label="Re-run scan" title="Re-run scan">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+        </button>
+      </header>
+
+      <!-- Loading -->
+      <div class="wa-ana-loading" id="wa-ana-loading">
+        <div class="wa-ana-load-row">
+          <div class="wa-ana-load-gauge"></div>
+          <div class="wa-ana-load-meta">
+            <div class="wa-ana-load-line wa-ana-load-line-w50"></div>
+            <div class="wa-ana-load-line wa-ana-load-line-w80"></div>
+            <div class="wa-ana-load-line wa-ana-load-line-w65"></div>
+          </div>
+        </div>
+        <div class="wa-ana-load-list">
+          <div class="wa-ana-load-card"></div>
+          <div class="wa-ana-load-card"></div>
+          <div class="wa-ana-load-card"></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="wa-ana-results" id="wa-ana-results" hidden>
+        <div class="wa-ana-summary">
+          <div class="wa-ana-gauge">
+            <svg viewBox="0 0 100 100" width="84" height="84" aria-hidden="true">
+              <circle cx="50" cy="50" r="42" stroke="var(--wa-tint-hi)" stroke-width="8" fill="none"/>
+              <path id="wa-ana-arc" d="" stroke="#1FCB8A" stroke-width="8" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="wa-ana-gauge-text">
+              <span class="wa-ana-gauge-score mono" id="wa-ana-score">—</span>
+              <span class="wa-ana-gauge-out mono">/ 100</span>
+            </div>
+          </div>
+          <div class="wa-ana-meta">
+            <div class="wa-ana-meta-strong">WebAble Score</div>
+            <div class="wa-ana-meta-sub" id="wa-ana-meta-sub"></div>
+            <div class="wa-ana-cats" id="wa-ana-cats"></div>
+          </div>
+        </div>
+
+        <div class="wa-ana-tabs" role="tablist" id="wa-ana-tabs">
+          <button class="wa-ana-tab is-active" data-sev="critical" role="tab"><span>Critical</span><span class="wa-ana-tab-count mono" data-count="critical">0</span></button>
+          <button class="wa-ana-tab" data-sev="serious"  role="tab"><span>Serious</span><span class="wa-ana-tab-count mono" data-count="serious">0</span></button>
+          <button class="wa-ana-tab" data-sev="moderate" role="tab"><span>Moderate</span><span class="wa-ana-tab-count mono" data-count="moderate">0</span></button>
+          <button class="wa-ana-tab" data-sev="minor"    role="tab"><span>Minor</span><span class="wa-ana-tab-count mono" data-count="minor">0</span></button>
+        </div>
+
+        <div class="wa-ana-issues" id="wa-ana-issues"></div>
+
+        <footer class="wa-ana-foot">
+          <button class="wa-ana-foot-btn wa-ana-foot-primary" id="wa-ana-full">
+            <span>Open full report</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </button>
+          <button class="wa-ana-foot-btn" id="wa-ana-copy">Copy markdown</button>
+        </footer>
+      </div>
+
+      <!-- Error state -->
+      <div class="wa-ana-error" id="wa-ana-error" hidden>
+        <span class="wa-ana-error-mark">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        <div class="wa-ana-error-title">Couldn't scan this page</div>
+        <div class="wa-ana-error-sub" id="wa-ana-error-sub">Open a normal http(s) page and try again — Chrome blocks scripting on chrome:// and store pages.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

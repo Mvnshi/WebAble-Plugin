@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WebAble — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+  <script src="wa-theme.js"></script>
+</head>
+<body>
+  <main class="opt-shell">
+    <header class="opt-head">
+      <div class="opt-brand">
+        <span class="opt-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg>
+        </span>
+        <div>
+          <div class="opt-brand-name">WebAble</div>
+          <div class="opt-brand-sub">Settings · Privacy · BYOK API key</div>
+        </div>
+      </div>
+      <div class="opt-version mono">v1.1 · MV3</div>
+    </header>
+
+    <section id="welcome" class="opt-banner" hidden>
+      <h1>Welcome to WebAble.</h1>
+      <p>Adapts the web to <em>you</em>. Carries your settings across every site you visit. Doesn't change the website for anyone else.</p>
+      <ul>
+        <li>21 Phase 1 tools — vision, reading, motor, cognitive, privacy.</li>
+        <li>Per-site memory: always-on or disable WebAble for any domain.</li>
+        <li>Phase 2 (AI) features unlock when you paste a Gemini key below. We never see your requests.</li>
+      </ul>
+    </section>
+
+    <section class="opt-card">
+      <h2 class="opt-card-title">Appearance</h2>
+      <div class="opt-row">
+        <span class="opt-label">Panel theme</span>
+        <div class="opt-segmented" data-setting="theme">
+          <button data-value="auto">Auto</button>
+          <button data-value="light">Light</button>
+          <button data-value="dark">Dark</button>
+        </div>
+      </div>
+      <div class="opt-row">
+        <span class="opt-label">Brand color</span>
+        <div class="opt-colors" data-setting="brandColor">
+          <button class="opt-color opt-color-blue"   data-value="blue"   aria-label="Electric blue"></button>
+          <button class="opt-color opt-color-green"  data-value="green"  aria-label="Accessibility green"></button>
+          <button class="opt-color opt-color-purple" data-value="purple" aria-label="Purple"></button>
+          <button class="opt-color opt-color-mono"   data-value="mono"   aria-label="Monochrome"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="opt-card">
+      <h2 class="opt-card-title">Privacy</h2>
+      <div class="opt-stat">
+        <div class="opt-stat-row">
+          <span class="opt-stat-num mono">0</span>
+          <span class="opt-stat-key">network calls made by WebAble</span>
+        </div>
+        <div class="opt-stat-row">
+          <span class="opt-stat-num mono">0</span>
+          <span class="opt-stat-key">accounts required</span>
+        </div>
+        <div class="opt-stat-row">
+          <span class="opt-stat-num mono">100%</span>
+          <span class="opt-stat-key">of your data stays on this device (chrome.storage.local)</span>
+        </div>
+      </div>
+      <p class="opt-fine">
+        We don't inject WebAble's behavior into any website beyond what you, the installing user, see in your own browser.
+        We don't claim to make sites "WCAG-compliant." The FTC fined accessiBe $1,000,000 in January 2026 for that exact pattern.
+        If you ever doubt what WebAble is doing, the source for this build is in the extension folder you loaded.
+      </p>
+    </section>
+
+    <section class="opt-card opt-card-account" id="opt-account">
+      <h2 class="opt-card-title">Account</h2>
+      <p class="opt-desc">
+        Two ways to use WebAble's AI features. Pick one — or use both, the extension picks Pro automatically when a session is active.
+      </p>
+
+      <!-- Pro state — visible when a Pro session is active -->
+      <div id="opt-pro-active" class="opt-pro-card opt-pro-active" hidden>
+        <div class="opt-pro-row">
+          <span class="opt-pro-mark">✓</span>
+          <div class="opt-pro-text">
+            <div class="opt-pro-title">WebAble Pro · <span id="opt-pro-plan">…</span></div>
+            <div class="opt-pro-sub" id="opt-pro-meta">…</div>
+          </div>
+          <span class="opt-pro-pill" id="opt-pro-status">active</span>
+        </div>
+        <div class="opt-pro-quota">
+          <div class="opt-pro-quota-row">
+            <span class="opt-pro-quota-key mono">USAGE TODAY</span>
+            <span class="opt-pro-quota-val" id="opt-pro-usage">— / —</span>
+          </div>
+          <div class="opt-pro-quota-bar"><span id="opt-pro-usage-bar"></span></div>
+        </div>
+        <div class="opt-pro-actions">
+          <button id="opt-pro-portal" class="opt-btn opt-btn-primary">Manage billing</button>
+          <button id="opt-pro-refresh" class="opt-btn">Refresh status</button>
+          <button id="opt-pro-logout" class="opt-btn opt-btn-warn">Sign out</button>
+        </div>
+      </div>
+
+      <!-- Pro CTA — visible when no Pro session -->
+      <div id="opt-pro-signup" class="opt-pro-card opt-pro-signup">
+        <div class="opt-pro-row">
+          <span class="opt-pro-mark opt-pro-mark-amber">✦</span>
+          <div class="opt-pro-text">
+            <div class="opt-pro-title">WebAble Pro</div>
+            <div class="opt-pro-sub">Unlimited AI features. We host the model. You don't manage keys, we don't track you.</div>
+          </div>
+        </div>
+        <ul class="opt-pro-feats">
+          <li>Plain-language summarizer · Smart Page Q&amp;A · Context-aware alt text · OCR · AI Remediation Guide</li>
+          <li>500 AI generations / day · per-user rate limits keep you safe</li>
+          <li>Cancel any time from the Stripe portal</li>
+        </ul>
+        <div class="opt-pro-input-row">
+          <label class="opt-input-row" style="flex: 1;">
+            <span class="opt-label">Backend URL</span>
+            <input id="opt-pro-backend" type="url" placeholder="https://api.webable.app   or   http://localhost:8787" autocomplete="off" spellcheck="false" />
+          </label>
+        </div>
+        <div class="opt-pro-actions">
+          <button id="opt-pro-monthly" class="opt-btn opt-btn-primary">Subscribe — Monthly</button>
+          <button id="opt-pro-annual"  class="opt-btn">Subscribe — Annual <span class="opt-pro-save">save ~18%</span></button>
+        </div>
+        <details class="opt-pro-paste">
+          <summary>Have an activation token? Paste it here</summary>
+          <div class="opt-input-row" style="margin-top: 8px;">
+            <input id="opt-pro-paste-token" type="text" placeholder="eyJhbGciOi…" autocomplete="off" spellcheck="false" />
+            <button id="opt-pro-paste-go" class="opt-btn">Activate</button>
+          </div>
+          <div class="opt-fine" style="margin-top: 6px;">If your browser blocked the auto-activation popup at checkout success, copy the token from that page and paste here. Backend URL must match where you bought the subscription.</div>
+        </details>
+      </div>
+    </section>
+
+    <section class="opt-card">
+      <h2 class="opt-card-title">Bring your own key (free)</h2>
+      <p class="opt-desc">
+        Already have a Gemini API key? Skip Pro and use BYOK — same features, you handle the billing with Google directly. Your key lives only in <code class="mono">chrome.storage.local</code>. Requests go straight from your browser to Google's API. We don't proxy, log, or train on a single token.
+      </p>
+      <div class="opt-row opt-row-stack">
+        <label class="opt-input-row">
+          <span class="opt-label">Gemini API key</span>
+          <input id="opt-key" type="password" placeholder="paste your key" autocomplete="off" spellcheck="false" />
+        </label>
+        <div class="opt-key-actions">
+          <button id="opt-key-save"  class="opt-btn opt-btn-primary">Save key locally</button>
+          <button id="opt-key-test"  class="opt-btn">Test connection</button>
+          <button id="opt-key-clear" class="opt-btn">Clear</button>
+          <a class="opt-btn opt-btn-ghost" href="https://ai.google.dev/" target="_blank" rel="noopener">How to get a key →</a>
+        </div>
+        <div class="opt-key-status" id="opt-key-status">No key set.</div>
+      </div>
+    </section>
+
+    <section class="opt-card">
+      <h2 class="opt-card-title">Sites</h2>
+      <p class="opt-desc">Manage per-site memory. WebAble re-applies tools when you revisit a site marked "always-on."</p>
+      <div id="opt-sites" class="opt-sites"></div>
+      <div class="opt-card-foot">
+        <button id="opt-clear-sites" class="opt-btn opt-btn-warn">Clear all per-site memory</button>
+      </div>
+    </section>
+
+    <section class="opt-card">
+      <h2 class="opt-card-title">Keyboard shortcuts</h2>
+      <table class="opt-keys">
+        <tbody>
+          <tr><td><kbd>Ctrl + U</kbd></td><td>Toggle the panel (intercepted before view-source).</td></tr>
+          <tr><td><kbd>Ctrl + Shift + U</kbd></td><td>Global panel toggle (works on any tab).</td></tr>
+          <tr><td><kbd>Ctrl + Shift + R</kbd></td><td>Read selection (or page) aloud.</td></tr>
+          <tr><td><kbd>Ctrl + Shift + P</kbd></td><td>Pin the tooltip you're hovering.</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close the panel.</td></tr>
+        </tbody>
+      </table>
+      <p class="opt-fine">Customize at <code class="mono">chrome://extensions/shortcuts</code>.</p>
+    </section>
+
+    <section class="opt-card">
+      <h2 class="opt-card-title">What WebAble doesn't do</h2>
+      <ul class="opt-no">
+        <li><span class="opt-x">✕</span> We don't scrape or store the pages you visit.</li>
+        <li><span class="opt-x">✕</span> We don't run telemetry. Zero. Not for "improving the product."</li>
+        <li><span class="opt-x">✕</span> We don't override your screen reader, voice control, or magnifier.</li>
+        <li><span class="opt-x">✕</span> We don't claim to fix websites. We adapt them locally for you.</li>
+        <li><span class="opt-x">✕</span> We don't auto-enable tools on install. Every toggle is opt-in.</li>
+      </ul>
+    </section>
+
+    <section class="opt-card opt-card-danger">
+      <h2 class="opt-card-title">Reset</h2>
+      <p class="opt-desc">Wipe all WebAble preferences from this device. Your Gemini key, per-site memory, theme, and brand color will be removed.</p>
+      <button id="opt-reset-all" class="opt-btn opt-btn-warn">Reset all WebAble preferences</button>
+    </section>
+
+    <footer class="opt-foot">
+      <div class="mono">WebAble · MV3 · made for the user, not the site owner.</div>
+      <div class="mono">© 2026 — load-unpacked prototype</div>
+    </footer>
+  </main>
+
+  <script src="gemini.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

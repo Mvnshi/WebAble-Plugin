@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WebAble Pro · Activated</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0B1220; --bg-2: #0E1525; --surface: #131C2E;
+      --accent: #2F80FF; --success: #1FCB8A; --amber: #F2B340;
+      --text: #F4F6FA; --text-2: #9AA4B8; --text-3: #6B768F;
+      --border: rgba(255,255,255,0.06); --border-hi: rgba(255,255,255,0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    main { max-width: 520px; margin: 0 auto; padding: 80px 24px 60px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px 28px; }
+    .mark { width: 56px; height: 56px; border-radius: 14px; background: rgba(31,203,138,0.16); border: 1px solid rgba(31,203,138,0.32); color: var(--success); display: grid; place-items: center; margin-bottom: 16px; font-size: 24px; }
+    h1 { margin: 0 0 6px; font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+    p { margin: 0 0 12px; color: var(--text-2); }
+    .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 16px 0 0; padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+    .meta dt { color: var(--text-3); font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding-top: 2px; }
+    .meta dd { margin: 0; color: var(--text); }
+    .status { margin-top: 18px; padding: 10px 12px; border-radius: 8px; background: rgba(47,128,255,0.06); border: 1px solid rgba(47,128,255,0.32); color: var(--accent); font-size: 13px; font-weight: 500; }
+    .status.ok { background: rgba(31,203,138,0.06); border-color: rgba(31,203,138,0.32); color: var(--success); }
+    .status.warn { background: rgba(242,179,64,0.06); border-color: rgba(242,179,64,0.32); color: var(--amber); }
+    .fallback { display: none; margin-top: 14px; padding: 12px 14px; background: var(--bg-2); border: 1px dashed var(--border-hi); border-radius: 8px; font-size: 13px; color: var(--text-2); }
+    .fallback.show { display: block; }
+    .fallback code { display: block; word-break: break-all; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; margin-top: 8px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; color: var(--accent); user-select: all; }
+    .copy { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 14px; background: var(--accent); color: #fff; border: none; border-radius: 7px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .copy:hover { filter: brightness(1.08); }
+    .foot { margin-top: 28px; font-size: 11px; color: var(--text-3); text-align: center; }
+    .foot a { color: var(--text-2); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <div class="mark">✓</div>
+      <h1>WebAble Pro is active.</h1>
+      <p>Welcome aboard. AI features now run through your subscription — no Gemini key needed.</p>
+
+      <dl class="meta">
+        <dt>Plan</dt>     <dd>{{PLAN}}</dd>
+        <dt>Email</dt>    <dd>{{EMAIL}}</dd>
+        <dt>Token TTL</dt><dd id="ttl">—</dd>
+      </dl>
+
+      <div id="status" class="status">Activating in your browser…</div>
+
+      <div id="fallback" class="fallback">
+        <strong>Couldn't reach the extension automatically.</strong> Open
+        WebAble → Settings → Account → "Paste activation token" and paste this:
+        <code id="raw-token">{{TOKEN}}</code>
+        <button class="copy" id="copy-btn" type="button">Copy token</button>
+      </div>
+    </div>
+    <p class="foot">You can close this tab once activated. Manage billing anytime from
+      <a href="/" target="_self">your account</a>.</p>
+  </main>
+
+  <script>
+    // Server-injected values. Don't reformat — the template uses literal placeholders.
+    const TOKEN        = "{{TOKEN}}";
+    const EXPIRES_AT   = parseInt("{{EXPIRES_AT}}", 10);
+    const EXTENSION_ID = "{{EXTENSION_ID}}";
+
+    // Show TTL.
+    if (EXPIRES_AT) {
+      const days = Math.round((EXPIRES_AT * 1000 - Date.now()) / 86400000);
+      document.getElementById('ttl').textContent = days + ' days';
+    }
+
+    const status = document.getElementById('status');
+    const fallback = document.getElementById('fallback');
+
+    function showFallback(reason) {
+      status.className = 'status warn';
+      status.textContent = 'Manual activation required — ' + reason;
+      fallback.classList.add('show');
+    }
+
+    function activated() {
+      status.className = 'status ok';
+      status.textContent = '✓ Activated. You can close this tab.';
+      // Auto-close after 4s if the browser allows it.
+      setTimeout(() => { try { window.close(); } catch (_) {} }, 4000);
+    }
+
+    if (!EXTENSION_ID) {
+      showFallback('extension ID was not passed to checkout');
+    } else if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) {
+      showFallback('this browser does not expose chrome.runtime');
+    } else {
+      try {
+        chrome.runtime.sendMessage(
+          EXTENSION_ID,
+          { type: 'WEBABLE_PRO_ACTIVATED', token: TOKEN, expiresAt: EXPIRES_AT },
+          (response) => {
+            if (chrome.runtime.lastError) return showFallback(chrome.runtime.lastError.message);
+            if (response && response.ok) return activated();
+            showFallback('extension did not respond');
+          }
+        );
+      } catch (e) {
+        showFallback(e.message || 'unknown error');
+      }
+    }
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(TOKEN).then(() => {
+        document.getElementById('copy-btn').textContent = 'Copied ✓';
+      });
+    });
+  </script>
+</body>
+</html>

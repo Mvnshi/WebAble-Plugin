@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WebAble Pro · backend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0B1220; --bg-2: #0E1525; --surface: #131C2E;
+      --accent: #2F80FF; --success: #1FCB8A; --amber: #F2B340;
+      --text: #F4F6FA; --text-2: #9AA4B8; --text-3: #6B768F;
+      --border: rgba(255,255,255,0.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    main { max-width: 700px; margin: 60px auto; padding: 0 24px; }
+    h1 { margin: 0 0 6px; font-size: 26px; font-weight: 500; letter-spacing: -0.01em; }
+    .sub { color: var(--text-2); margin: 0 0 24px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 26px; margin-bottom: 16px; }
+    h2 { margin: 0 0 12px; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+    code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; background: var(--bg-2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--accent); }
+    pre { margin: 8px 0; padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; line-height: 1.6; }
+    .row { display: grid; grid-template-columns: 200px 1fr; gap: 6px 12px; align-items: baseline; font-size: 13px; padding: 8px 0; border-top: 1px solid var(--border); }
+    .row:first-of-type { border-top: none; }
+    .row dt { color: var(--text-3); font-family: ui-monospace, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .row dd { margin: 0; color: var(--text); font-family: ui-monospace, monospace; font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-family: ui-monospace, monospace; }
+    .pill.ok { background: rgba(31,203,138,0.10); color: var(--success); border: 1px solid rgba(31,203,138,0.32); }
+    .pill.warn { background: rgba(242,179,64,0.10); color: var(--amber); border: 1px solid rgba(242,179,64,0.32); }
+    p { margin: 0 0 10px; color: var(--text-2); }
+    p strong { color: var(--text); font-weight: 500; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>WebAble Pro · backend</h1>
+    <p class="sub">Self-hostable Stripe + Gemini proxy for the WebAble Chrome extension.
+       This page is only for the operator — end users never see it.</p>
+
+    <div class="card">
+      <h2>Status</h2>
+      <p>Hit <code>GET /healthz</code> to check live config:</p>
+      <pre id="health">checking…</pre>
+    </div>
+
+    <div class="card">
+      <h2>What this server does</h2>
+      <p><strong>Mints subscriptions</strong> via Stripe Checkout (<code>POST /api/checkout/create</code>) and
+         lets users manage them in the Stripe Billing Portal (<code>POST /api/billing/create</code>).</p>
+      <p><strong>Proxies Gemini calls</strong> for paying users (<code>POST /api/ai/*</code>) — your
+         <code>GEMINI_API_KEY</code> is the one that gets billed, never the user's.</p>
+      <p><strong>Verifies Stripe webhooks</strong> at <code>POST /api/webhooks/stripe</code> with the
+         signing secret — invoices, plan changes, cancellations all sync into the
+         user database automatically.</p>
+    </div>
+
+    <div class="card">
+      <h2>Setup checklist</h2>
+      <p>See <code>STRIPE_SETUP.md</code> in the repo root for step-by-step. TL;DR:</p>
+      <ol>
+        <li>Create a Stripe account, copy <code>sk_test_…</code> to <code>.env</code></li>
+        <li>Create a Product + two Prices (monthly + annual), paste their IDs in <code>.env</code></li>
+        <li>Get a Gemini API key from <code>ai.google.dev</code>, paste in <code>.env</code></li>
+        <li><code>npm install &amp;&amp; npm start</code></li>
+        <li>For local dev: <code>stripe listen --forward-to localhost:8787/api/webhooks/stripe</code></li>
+        <li>Open the WebAble extension → Settings → Account → "Connect to my server" → enter the URL of this server</li>
+      </ol>
+    </div>
+  </main>
+  <script>
+    fetch('/healthz').then((r) => r.json()).then((data) => {
+      const fmt = (k, v) => `<span class="row"><dt>${k}</dt><dd>${typeof v === 'boolean' ? `<span class="pill ${v ? 'ok' : 'warn'}">${v ? 'configured' : 'missing'}</span>` : v}</dd></span>`;
+      document.getElementById('health').innerHTML = [
+        fmt('publicUrl',         data.publicUrl || '(unset)'),
+        fmt('stripeConfigured',  data.stripeConfigured),
+        fmt('webhookConfigured', data.webhookConfigured),
+        fmt('pricesConfigured',  data.pricesConfigured),
+        fmt('geminiConfigured',  data.geminiConfigured),
+      ].join('');
+    });
+  </script>
+</body>
+</html>
