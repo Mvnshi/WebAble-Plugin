@@ -1,4 +1,4 @@
-git add# WebAble
+# WebAble
 
 **Adapts the web to you.** Carries your reading, vision, motor, and cognitive accessibility settings across every site you visit. The settings stay with the user — not the website.
 
