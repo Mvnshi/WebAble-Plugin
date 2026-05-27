@@ -181,6 +181,3 @@ If the M&A team asks "what's left?" — every Phase 2 (AI) feature is in `Coming
 ## License
 
 Proprietary prototype. Not for redistribution.
-#   W e b A b l e - P l u g i n 
- 
- 
