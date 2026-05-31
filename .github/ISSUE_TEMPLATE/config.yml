@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Embedding the widget
+    url: https://github.com/Mvnshi/WebAble-Plugin/blob/main/EMBED.md
+    about: How to add WebAble to your website, with config and framework recipes.
+  - name: 💬 Questions & ideas
+    url: https://github.com/Mvnshi/WebAble-Plugin/discussions
+    about: Ask anything, share how you use WebAble, or float an idea before filing.

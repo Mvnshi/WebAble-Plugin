@@ -1,0 +1,46 @@
+name: "🧩 New accessibility tool"
+description: Propose a new tool for the WebAble toolkit.
+labels: ["enhancement", "new-tool"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tools are small, reversible page adaptations. See `CONTRIBUTING.md` →
+        "Add a new tool" for how they're built — and feel free to open a PR.
+  - type: input
+    id: name
+    attributes:
+      label: Tool name
+      placeholder: e.g. Line Focus Mask
+    validations:
+      required: true
+  - type: textarea
+    id: does
+    attributes:
+      label: What does it do?
+      description: Describe the page adaptation in one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Who does it help, and how?
+      description: Which disability, need, or situation does this serve?
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options: [Vision, Reading, Motor, Cognitive, Privacy, Other]
+    validations:
+      required: true
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Honesty check
+      options:
+        - label: This is fully reversible (turning it off restores the page).
+          required: true
+        - label: It does not override ARIA, move focus, or hide focusable nodes from screen readers.
+          required: true

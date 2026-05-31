@@ -1,0 +1,58 @@
+name: "🐛 Bug report"
+description: Something in WebAble doesn't work or breaks a page.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Clear bugs make WebAble better for everyone.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did it happen?
+      options:
+        - The embeddable website widget (dist/webable.js)
+        - The browser extension
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Open the WebAble panel
+        3. Turn on …
+        4. See …
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Page URL (if public)
+      description: The page where it happens, if you can share it.
+  - type: input
+    id: tool
+    attributes:
+      label: Which tool or profile?
+      placeholder: e.g. High Contrast (darkSafe), Dyslexia profile
+  - type: input
+    id: env
+    attributes:
+      label: Browser, OS, and assistive tech
+      placeholder: e.g. Chrome 124 on Windows 11 with NVDA
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Anything in the browser devtools console (look for "[WebAble]").
+      render: shell
