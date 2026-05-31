@@ -1,0 +1,26 @@
+/* WebAble Embed — additions on top of the shared design system (content.css).
+   Only what the website widget needs beyond the extension styles. Every
+   selector stays in the .webable-* namespace so the host page is untouched. */
+
+/* Two-tab header (extension ships 3- and 4-tab variants; embed uses 2). */
+.webable-panel-tabs-2 { grid-template-columns: 1fr 1fr; }
+
+/* "Powered by WebAble" attribution — the open-source flywheel. Subtle,
+   keyboard-focusable, hideable via data-webable-attribution="false". */
+.webable-panel-footer { flex-direction: column; align-items: stretch; gap: 8px; }
+.webable-powered {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--wa-text-3);
+  text-decoration: none;
+  padding: 2px 0 1px;
+  border-top: 1px solid var(--wa-border);
+  margin-top: 2px;
+  transition: color 120ms ease-out;
+}
+.webable-powered strong { color: var(--wa-text-2); font-weight: 600; }
+.webable-powered:hover { color: var(--wa-text-2); }
+.webable-powered:hover strong { color: var(--wa-accent); }
+.webable-powered:focus-visible { outline: 2px solid var(--wa-border-active); outline-offset: 2px; border-radius: 6px; }

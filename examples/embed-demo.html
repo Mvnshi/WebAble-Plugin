@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riverside Community Library — WebAble embed demo</title>
+  <meta name="description" content="A demo page with WebAble embedded. Click the accessibility button to adapt the page to you." />
+  <style>
+    :root { --ink: #1f2733; --muted: #5b6678; --line: #e6e9f0; --brand: #1b6b4c; --bg: #fbfbf9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Georgia, "Times New Roman", serif; color: var(--ink); background: var(--bg); line-height: 1.65; }
+    header.site { background: var(--brand); color: #fff; padding: 14px 0; position: sticky; top: 0; z-index: 10; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+    header.site .wrap { display: flex; align-items: center; justify-content: space-between; }
+    header.site a { color: #fff; text-decoration: none; font-family: system-ui, sans-serif; font-size: 14px; opacity: 0.92; }
+    nav a { margin-left: 18px; }
+    h1 { font-size: 40px; line-height: 1.15; margin: 28px 0 8px; }
+    h2 { font-size: 26px; margin: 36px 0 10px; }
+    .lede { font-size: 20px; color: var(--muted); }
+    article { padding: 8px 0 60px; }
+    img.hero { width: 100%; height: 280px; object-fit: cover; border-radius: 10px; margin: 18px 0; }
+    .byline { font-family: system-ui, sans-serif; font-size: 13px; color: var(--muted); }
+    /* Intentionally low-contrast text — try High Contrast / Smart Contrast. */
+    .fine { color: #b3bccb; font-size: 13px; font-family: system-ui, sans-serif; }
+    /* An always-on animation — try Stop Animations. */
+    .pulse { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #e5484d; margin-right: 8px; animation: blink 1s steps(2) infinite; vertical-align: middle; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .banner-live { font-family: system-ui, sans-serif; font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: #fff; }
+    .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+    .card h3 { font-size: 18px; margin: 10px 0 4px; }
+    /* Tiny click targets — try Click Targets / Visible Focus. */
+    .chip { display: inline-block; font-family: system-ui, sans-serif; font-size: 12px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); text-decoration: none; margin: 2px; }
+    footer.site { border-top: 1px solid var(--line); padding: 28px 0; font-family: system-ui, sans-serif; font-size: 13px; color: var(--muted); }
+    /* A fake cookie banner — try Cookie Killer. */
+    #cookie-banner { position: fixed; left: 16px; right: 16px; bottom: 16px; background: #11151c; color: #fff; border-radius: 12px; padding: 16px 18px; display: flex; gap: 12px; align-items: center; justify-content: space-between; font-family: system-ui, sans-serif; font-size: 14px; z-index: 50; box-shadow: 0 12px 40px rgba(0,0,0,.3); flex-wrap: wrap; }
+    #cookie-banner .actions { display: flex; gap: 8px; }
+    #cookie-banner button { font: inherit; padding: 8px 14px; border-radius: 8px; border: 0; cursor: pointer; }
+    #cookie-banner .accept { background: #2f80ff; color: #fff; }
+    #cookie-banner .reject { background: transparent; color: #cdd6e6; border: 1px solid #2c333f; }
+    .note { background: #eef6f1; border: 1px solid #cfe7da; border-radius: 10px; padding: 14px 16px; font-family: system-ui, sans-serif; font-size: 14px; margin: 18px 0; }
+    .note code { background: #dceee4; padding: 1px 5px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap">
+      <strong style="font-family:system-ui,sans-serif">Riverside Community Library</strong>
+      <nav>
+        <a href="#programs">Programs</a>
+        <a href="#hours">Hours</a>
+        <a href="#visit">Visit</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article>
+      <p class="byline">Community · 4 min read</p>
+      <h1>A library card is the most powerful thing in your wallet</h1>
+      <p class="lede">Free books, free internet, free help. For 112 years, Riverside has been the front door to everything our neighbors need to learn, apply, and belong.</p>
+      <img class="hero" alt="" src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1200&q=70" />
+
+      <p><span class="pulse" aria-hidden="true"></span><span class="banner-live">Live: 14 people are using the maker space right now.</span></p>
+
+      <p>Walk through our doors on any weekday and you will find a retiree learning to video-call her grandchildren, a teenager printing a résumé, and a newcomer practicing English with a volunteer. None of them paid a cent. That is the quiet radicalism of a public library: it assumes everyone deserves access, and then it simply provides it.</p>
+
+      <h2 id="programs">What your card unlocks</h2>
+      <p>Borrowing is just the beginning. Your card is the key to digital archives, language courses, museum passes, and a maker space stocked with 3D printers and sewing machines. Below are a few of the programs neighbors reach for most.</p>
+
+      <div class="cards">
+        <div class="card">
+          <img alt="" src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=70" />
+          <h3>Homework Help</h3>
+          <p style="font-size:15px">Free tutoring, every afternoon, no appointment needed.</p>
+          <a class="chip" href="#">K–5</a><a class="chip" href="#">Middle</a><a class="chip" href="#">High</a>
+        </div>
+        <div class="card">
+          <img alt="" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=70" />
+          <h3>Digital Skills</h3>
+          <p style="font-size:15px">From email basics to spreadsheets and online safety.</p>
+          <a class="chip" href="#">Beginner</a><a class="chip" href="#">Jobs</a><a class="chip" href="#">Seniors</a>
+        </div>
+      </div>
+
+      <h2 id="hours">Hours &amp; access</h2>
+      <p>We are open seven days a week, and every floor is step-free. Large-print and audio collections live on the second floor, and assistive listening devices are available at the front desk.</p>
+      <p class="fine">This sentence is intentionally low-contrast to demonstrate WebAble's High Contrast and Smart Contrast tools. Open the panel and try them.</p>
+
+      <h2 id="visit">Plan your visit</h2>
+      <p>Riverside Community Library, 200 Maple Street. Buses 12 and 40 stop at the door. Parking and a bike corral are available on the Elm Street side. Questions? Ask any librarian — helping is literally our job.</p>
+
+      <div class="note">
+        <strong>This page has WebAble embedded.</strong> Look for the round accessibility button in the
+        bottom-right corner (or press <code>Ctrl</code>+<code>U</code>). It was added with a single
+        <code>&lt;script&gt;</code> tag — see the bottom of this file's source.
+      </div>
+    </article>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">© 2026 Riverside Community Library · A demo page for the open-source WebAble widget.</div>
+  </footer>
+
+  <!-- A fake cookie banner so the Cookie Killer tool has something to dismiss. -->
+  <div id="cookie-banner" role="dialog" aria-label="Cookie consent">
+    <span>We use cookies to remember your reading list and improve the site.</span>
+    <span class="actions">
+      <button class="reject" type="button" onclick="this.closest('#cookie-banner').remove()">Reject non-essential</button>
+      <button class="accept" type="button" onclick="this.closest('#cookie-banner').remove()">Accept all</button>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────────────
+       THE ONLY LINE A SITE OWNER ADDS. Everything above is the host page.
+       In production this points at the CDN:
+         <script src="https://cdn.jsdelivr.net/gh/Mvnshi/WebAble-Plugin@main/dist/webable.js"
+                 data-webable defer></script>
+       Here we load the local build so you can try it offline.
+       ───────────────────────────────────────────────────────────────────── -->
+  <script
+    src="../dist/webable.js"
+    data-webable
+    data-webable-color="#1b6b4c"
+    data-webable-position="bottom-right"
+    defer></script>
+</body>
+</html>

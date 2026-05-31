@@ -1,0 +1,62 @@
+{
+  "name": "webable",
+  "version": "2.0.0",
+  "description": "Free, open-source accessibility widget and browser extension. Adapts any website to the user — 21 vision/reading/motor/cognitive tools and 7 one-click profiles. Embed it with one line, or install the extension. User-side by design: never fakes WCAG compliance.",
+  "license": "MIT",
+  "author": "WebAble contributors",
+  "homepage": "https://github.com/Mvnshi/WebAble-Plugin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mvnshi/WebAble-Plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mvnshi/WebAble-Plugin/issues"
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "widget",
+    "embed",
+    "accessibility-widget",
+    "screen-reader",
+    "dyslexia",
+    "low-vision",
+    "color-blindness",
+    "high-contrast",
+    "text-to-speech",
+    "inclusive-design",
+    "chrome-extension",
+    "ada-compliance"
+  ],
+  "main": "dist/webable.js",
+  "module": "core/webable-engine.js",
+  "unpkg": "dist/webable.js",
+  "jsdelivr": "dist/webable.js",
+  "exports": {
+    ".": "./dist/webable.js",
+    "./engine": "./core/webable-engine.js",
+    "./css": "./dist/webable.css"
+  },
+  "files": [
+    "dist/",
+    "core/",
+    "embed/",
+    "content.css",
+    "EMBED.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build-embed.mjs",
+    "build:embed": "node scripts/build-embed.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "test": "node scripts/smoke.mjs",
+    "check": "node --check core/webable-engine.js && node --check embed/webable.embed.js && node --check dist/webable.js",
+    "serve": "node scripts/serve.mjs",
+    "prepublishOnly": "node scripts/build-embed.mjs && node scripts/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

@@ -1,0 +1,22 @@
+# Dependencies (the widget itself has none; this is for tooling/backend)
+node_modules/
+
+# Logs & caches
+*.log
+npm-debug.log*
+.npm/
+.cache/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Env files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# NOTE: dist/ is intentionally committed — the CDN snippet serves it directly.
