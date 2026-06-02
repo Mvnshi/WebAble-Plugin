@@ -13,6 +13,8 @@ install the browser extension and carry your settings everywhere.
 ![Widget size](https://img.shields.io/badge/widget-~35%20KB%20gzipped-1FCB8A.svg)
 ![PRs welcome](https://img.shields.io/badge/PRs-welcome-A574FF.svg)
 
+**[🚀 Try the live demo](https://mvnshi.github.io/WebAble-Plugin/)** · [📖 Embed guide](EMBED.md) · [💬 Discussions](https://github.com/Mvnshi/WebAble-Plugin/discussions) · [💛 Sponsor](https://github.com/sponsors/Mvnshi)
+
 </div>
 
 ---
