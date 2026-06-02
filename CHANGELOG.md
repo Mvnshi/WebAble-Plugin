@@ -25,8 +25,7 @@ All notable changes to WebAble are documented here. This project follows
 - **Headless engine smoke test** (`scripts/smoke.mjs`) — no browser/jsdom — that
   verifies the engine's class/variable contract with the stylesheet.
 - **Tiny static dev server** (`scripts/serve.mjs`).
-- **Live demo landing page** at `docs/index.html`, ready for GitHub Pages.
-- **`examples/embed-demo.html`** — a realistic page with the widget embedded.
+- **`examples/embed-demo.html`** — a realistic page with the widget embedded for local testing.
 - **`EMBED.md`** — full integration guide (config reference, framework recipes,
   privacy notes, honest positioning vs. overlay vendors, AI roadmap).
 - **Open-source scaffolding** — MIT `LICENSE`, README rewrite, `CONTRIBUTING.md`,
