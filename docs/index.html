@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebAble — free, open-source accessibility for the whole web</title>
+  <meta name="description" content="Add real accessibility to your site with one line of code, or install the browser extension and carry your settings everywhere. 21 vision, reading, motor, and cognitive tools. MIT licensed, no telemetry." />
+
+  <!-- Open Graph / social -->
+  <meta property="og:title" content="WebAble — accessibility for the whole web, in one line" />
+  <meta property="og:description" content="Free, open-source widget + browser extension. 21 tools, 7 profiles, ~35 KB gzipped, no telemetry, MIT licensed. Click the accessibility button on this page to try it." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mvnshi.github.io/WebAble-Plugin/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+  <style>
+    :root {
+      --bg:        #06090F;
+      --bg-2:      #0B1220;
+      --surface:   #0E1525;
+      --surface-2: #131C2E;
+      --line:      rgba(255,255,255,0.07);
+      --line-hi:   rgba(255,255,255,0.12);
+      --accent:    #2F80FF;
+      --accent-2:  #A574FF;
+      --success:   #1FCB8A;
+      --amber:     #F2B340;
+      --text:      #F4F6FA;
+      --text-2:    #9AA4B8;
+      --text-3:    #6B768F;
+      --font:      'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --mono:      'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Header ─────────────────────────────────────────────────────── */
+    header.site {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(6,9,15,0.78);
+      backdrop-filter: saturate(140%) blur(10px);
+      -webkit-backdrop-filter: saturate(140%) blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    header.site .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+    .logo-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center; color: #fff;
+      box-shadow: 0 4px 16px -4px rgba(47,128,255,0.45);
+    }
+    .logo-mark svg { width: 17px; height: 17px; }
+    nav.head { display: flex; gap: 6px; align-items: center; }
+    nav.head a { color: var(--text-2); padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: color 120ms, background 120ms; }
+    nav.head a:hover { color: var(--text); background: var(--line); text-decoration: none; }
+    nav.head a.cta { background: var(--accent); color: #fff; padding: 8px 14px; }
+    nav.head a.cta:hover { background: #4191ff; }
+    nav.head a.cta-ghost { border: 1px solid var(--line-hi); }
+    .star-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: 12px; color: var(--text-2);
+      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+    }
+
+    /* ── Hero ───────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: 90px 0 64px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: -160px 0 0 0;
+      background:
+        radial-gradient(800px 360px at 50% 0%, rgba(47,128,255,0.20), transparent 70%),
+        radial-gradient(700px 320px at 80% 12%, rgba(165,116,255,0.16), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; text-align: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 12px; color: var(--text-2);
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(47,128,255,0.10); border: 1px solid rgba(47,128,255,0.30);
+      margin-bottom: 22px;
+    }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 12px var(--success); animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 50% { opacity: 0.4; } }
+    h1 {
+      font-size: clamp(40px, 6vw, 68px);
+      line-height: 1.05; letter-spacing: -0.025em; font-weight: 700;
+      margin: 0 0 18px;
+    }
+    h1 .accent {
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lede {
+      font-size: clamp(17px, 1.6vw, 19px);
+      color: var(--text-2);
+      max-width: 640px; margin: 0 auto 36px;
+    }
+    .cta-row {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin: 0 0 36px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 15px;
+      border: 1px solid transparent; cursor: pointer; transition: transform 80ms, background 120ms, border-color 120ms;
+      font-family: inherit; text-decoration: none;
+    }
+    .btn:hover { text-decoration: none; transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #4191ff; }
+    .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--line-hi); }
+    .btn-ghost:hover { background: var(--surface-2); border-color: rgba(255,255,255,0.20); }
+
+    /* Snippet card */
+    .snippet {
+      position: relative;
+      max-width: 820px; margin: 0 auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border: 1px solid var(--line-hi); border-radius: 14px;
+      padding: 16px 16px 16px 18px;
+      box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+      text-align: left;
+    }
+    .snippet-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .snippet-label { font-family: var(--mono); font-size: 12px; color: var(--text-3); letter-spacing: 0.02em; }
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface-2); color: var(--text-2);
+      border: 1px solid var(--line-hi); padding: 6px 10px; border-radius: 8px;
+      font: 500 12px var(--font); cursor: pointer; transition: color 120ms, background 120ms;
+    }
+    .copy-btn:hover { color: var(--text); background: rgba(47,128,255,0.10); border-color: rgba(47,128,255,0.30); }
+    .copy-btn.ok { color: var(--success); border-color: rgba(31,203,138,0.40); }
+    pre.snippet-code {
+      margin: 0; padding: 14px 16px; border-radius: 10px;
+      background: #04070D; border: 1px solid var(--line);
+      font: 500 13.5px/1.6 var(--mono); color: #d8e2f5;
+      overflow-x: auto; white-space: pre;
+    }
+    .snippet-code .tag { color: #ff9eb5; }
+    .snippet-code .attr { color: #82aaff; }
+    .snippet-code .str { color: #c3e88d; }
+
+    .hero-poke {
+      margin: 28px auto 0; max-width: 520px;
+      display: flex; align-items: center; gap: 10px; justify-content: center;
+      color: var(--text-3); font-size: 14px;
+    }
+    .hero-poke svg { color: var(--accent); width: 16px; height: 16px; }
+
+    /* ── Sections ───────────────────────────────────────────────────── */
+    section { padding: 72px 0; border-top: 1px solid var(--line); }
+    section h2 {
+      font-size: clamp(28px, 3.4vw, 38px);
+      line-height: 1.15; letter-spacing: -0.02em; font-weight: 700;
+      margin: 0 0 14px;
+    }
+    section .section-lede { color: var(--text-2); max-width: 640px; margin: 0 0 40px; font-size: 17px; }
+
+    /* Why grid */
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 840px) { .why-grid { grid-template-columns: 1fr; } }
+    .why-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px;
+    }
+    .why-card .why-mark {
+      width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+      background: rgba(47,128,255,0.10); color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .why-card.green .why-mark { background: rgba(31,203,138,0.10); color: var(--success); }
+    .why-card.purple .why-mark { background: rgba(165,116,255,0.10); color: var(--accent-2); }
+    .why-card h3 { margin: 0 0 6px; font-size: 18px; }
+    .why-card p { margin: 0; color: var(--text-2); font-size: 14.5px; }
+
+    /* Tools grid */
+    .tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 900px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } }
+    .tool {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 6px;
+      transition: border-color 120ms, transform 120ms;
+    }
+    .tool:hover { border-color: var(--line-hi); transform: translateY(-2px); }
+    .tool .tool-row { display: flex; align-items: center; gap: 8px; color: var(--text-2); }
+    .tool .tool-icon { width: 18px; height: 18px; color: var(--accent); }
+    .tool .tool-name { font-weight: 600; color: var(--text); font-size: 14.5px; }
+    .tool .tool-cat { font-family: var(--mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* Honest vs overlays callout */
+    .vs-card {
+      background: linear-gradient(135deg, rgba(229,72,77,0.06), rgba(47,128,255,0.06));
+      border: 1px solid rgba(229,72,77,0.20); border-radius: 16px;
+      padding: 28px 28px;
+    }
+    .vs-card h3 { margin: 0 0 10px; font-size: 22px; }
+    .vs-card p { color: var(--text-2); margin: 0 0 14px; }
+    .vs-card .ftc {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 12.5px; color: var(--amber);
+      padding: 6px 10px; border-radius: 8px;
+      background: rgba(242,179,64,0.10); border: 1px solid rgba(242,179,64,0.30);
+    }
+
+    /* Devs section */
+    .devs-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: start; }
+    @media (max-width: 900px) { .devs-grid { grid-template-columns: 1fr; } }
+    .code-block {
+      background: #04070D; border: 1px solid var(--line); border-radius: 12px;
+      padding: 14px 16px;
+      font: 500 13px/1.65 var(--mono); color: #d8e2f5;
+      overflow-x: auto;
+    }
+    .code-block + .code-block { margin-top: 12px; }
+    .code-title { font-family: var(--mono); font-size: 11px; color: var(--text-3); margin: 14px 0 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 4px; }
+    .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+    .stat-num { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+    .stat-num.green { color: var(--success); }
+    .stat-num.blue { color: var(--accent); }
+    .stat-num.purple { color: var(--accent-2); }
+    .stat-label { color: var(--text-2); font-size: 13px; margin-top: 4px; }
+
+    /* CTA bottom */
+    .end-cta {
+      text-align: center; padding: 80px 24px;
+      border-radius: 20px; margin: 24px 0;
+      background: radial-gradient(800px 320px at 50% 50%, rgba(47,128,255,0.18), transparent 70%), var(--surface);
+      border: 1px solid var(--line-hi);
+    }
+    .end-cta h2 { margin: 0 0 12px; }
+    .end-cta p { color: var(--text-2); max-width: 540px; margin: 0 auto 28px; }
+
+    footer.site { padding: 36px 0 56px; border-top: 1px solid var(--line); color: var(--text-3); font-size: 14px; }
+    footer.site .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+    footer.site a { color: var(--text-2); margin-right: 14px; }
+    footer.site a:hover { color: var(--text); }
+
+    /* Skip link for keyboard users */
+    .skip {
+      position: absolute; left: -9999px;
+      background: var(--accent); color: #fff; padding: 10px 16px; border-radius: 8px;
+      font-weight: 600;
+    }
+    .skip:focus { left: 16px; top: 16px; z-index: 100; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="/">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg></span>
+        <span>WebAble</span>
+      </a>
+      <nav class="head">
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#developers">Developers</a>
+        <a class="cta-ghost" href="https://github.com/Mvnshi/WebAble-Plugin" target="_blank" rel="noopener">GitHub</a>
+        <a class="cta" href="https://github.com/sponsors/Mvnshi" target="_blank" rel="noopener">Sponsor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ── HERO ──────────────────────────────────────────────────────── -->
+    <section class="hero" style="border-top: 0;">
+      <div class="wrap hero-inner">
+        <span class="eyebrow"><span class="dot"></span>v2.0.0 · MIT · 0 dependencies</span>
+        <h1>Accessibility for the whole web,<br><span class="accent">in one line.</span></h1>
+        <p class="lede">
+          Free, open-source widget <em>and</em> browser extension. 21 vision, reading, motor, and
+          cognitive tools that adapt any page to the person reading it. No accounts, no telemetry,
+          no fake compliance badges.
+        </p>
+
+        <div class="snippet" id="install">
+          <div class="snippet-head">
+            <span class="snippet-label">Add to your site — that's the whole install</span>
+            <button class="copy-btn" id="copy-snippet" type="button" aria-label="Copy install snippet">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+<pre class="snippet-code" id="snippet-code"><span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://cdn.jsdelivr.net/gh/Mvnshi/WebAble-Plugin@main/dist/webable.js"</span>
+        <span class="attr">data-webable</span> <span class="attr">defer</span><span class="tag">&gt;&lt;/script&gt;</span></pre>
+        </div>
+
+        <div class="cta-row" style="margin-top:28px">
+          <a class="btn btn-primary" href="#demo-page">See it on this page →</a>
+          <a class="btn btn-ghost" href="https://github.com/Mvnshi/WebAble-Plugin" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>
+            Star on GitHub
+          </a>
+        </div>
+
+        <div class="hero-poke">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          <span>WebAble is running on this page right now — see the round button in the corner.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── WHY 3-up ──────────────────────────────────────────────────── -->
+    <section>
+      <div class="wrap">
+        <h2>Built for everyone — built honestly.</h2>
+        <p class="section-lede">
+          Three things make WebAble fundamentally different from the overlay vendors the FTC just
+          fined.
+        </p>
+        <div class="why-grid">
+          <div class="why-card">
+            <div class="why-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <h3>User-side by design</h3>
+            <p>WebAble adapts the page for the person who opens it. It never sets <code>aria-hidden</code> on focusable nodes, overrides <code>role</code>, or steals focus. Your screen reader keeps working.</p>
+          </div>
+          <div class="why-card green">
+            <div class="why-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <h3>Honest about what it can do</h3>
+            <p>We don't claim to make your site WCAG-compliant — no software can, and saying so is what got accessiBe a million-dollar fine. WebAble's job is to help individuals.</p>
+          </div>
+          <div class="why-card purple">
+            <div class="why-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <h3>Open source, fund the maintainers</h3>
+            <p>MIT licensed. Zero dependencies. ~35 KB gzipped. Fork it, audit it, ship it. Sponsorship keeps the widget fast and the maintainers paid.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FEATURES (tools grid) ─────────────────────────────────────── -->
+    <section id="features">
+      <div class="wrap">
+        <h2>21 tools. 7 one-click profiles.</h2>
+        <p class="section-lede">
+          Every tool below is implemented and reversible. Curb-cut design: each one helps a
+          disabled user <em>and</em> every other user.
+        </p>
+
+        <div class="code-title">Vision</div>
+        <div class="tools-grid">
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span class="tool-name">Reading Mode</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20z"/></svg><span class="tool-name">High Contrast</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125 0-.937.756-1.688 1.688-1.688h1.989c3.105 0 5.65-2.547 5.65-5.65C22 6.5 17.5 2 12 2z"/></svg><span class="tool-name">Color Filter</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg><span class="tool-name">Text Size</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span class="tool-name">Force Pinch Zoom</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51z"/><path d="M13 13l6 6"/></svg><span class="tool-name">Big Cursor</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg><span class="tool-name">Reading Ruler</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/><circle cx="12" cy="12" r="3"/></svg><span class="tool-name">Visible Focus</span></div></div>
+        </div>
+
+        <div class="code-title" style="margin-top:24px">Reading</div>
+        <div class="tools-grid">
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 16 6-12 6 12"/><path d="M8 12h8"/></svg><span class="tool-name">Dyslexia Font</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v8"/><path d="M21 8v8"/><line x1="3" y1="12" x2="21" y2="12"/></svg><span class="tool-name">Letter &amp; Word Spacing</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span class="tool-name">Read Aloud</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><line x1="2" y1="2" x2="22" y2="22"/></svg><span class="tool-name">Hide Images</span></div></div>
+        </div>
+
+        <div class="code-title" style="margin-top:24px">Motor &amp; cognitive &amp; privacy</div>
+        <div class="tools-grid">
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><span class="tool-name">Click Targets</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24z"/></svg><span class="tool-name">Tooltip Pin</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg><span class="tool-name">Kill Stickies</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg><span class="tool-name">Auto-Scroll</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg><span class="tool-name">Hide Distractions</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><span class="tool-name">Stop Animations</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tool-name">Focus Mode</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.6-6.14 9 9 0 0 0-1.08-.06 5 5 0 0 1-4.22-2.44z"/><circle cx="9" cy="13" r="1"/><circle cx="14" cy="9" r="1"/></svg><span class="tool-name">Cookie Killer</span></div></div>
+          <div class="tool"><div class="tool-row"><svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><span class="tool-name">Popup Killer</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HONEST POSITIONING ────────────────────────────────────────── -->
+    <section>
+      <div class="wrap">
+        <div class="vs-card">
+          <span class="ftc">⚖️  FTC v. accessiBe — $1,000,000 fine, January 2026</span>
+          <h3 style="margin-top:14px">We're not the overlay you've been warned about.</h3>
+          <p>
+            Overlay vendors sold to website owners ("we'll make you compliant!") have been
+            <a href="https://www.ftc.gov/news-events/news/press-releases/2026/01/ftc-takes-action-against-accessibe-deceptive-claims-disabled-users" target="_blank" rel="noopener">legally challenged</a>
+            for deceiving disabled users. WebAble flips the model: it adapts pages for individuals
+            who choose to use it. We don't fake compliance, cloak content for crawlers, or claim
+            an AI can replace real accessibility work.
+          </p>
+          <p style="margin:0">
+            <strong>The honest truth about SEO and reach:</strong> a widget will not magically
+            boost your rankings — that's overlay marketing. What WebAble <em>actually</em> does:
+            it doesn't hurt your Core Web Vitals (defer-loaded, ~35 KB gz), it doesn't cloak
+            anything search engines could penalize, and it widens your real audience.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOR DEVELOPERS ────────────────────────────────────────────── -->
+    <section id="developers">
+      <div class="wrap">
+        <h2>For developers.</h2>
+        <p class="section-lede">
+          One file, zero dependencies, full JavaScript API. Drop into anything — React, Next.js,
+          Vue, WordPress, Shopify, Webflow, or plain HTML. Self-host, npm-install, or CDN.
+        </p>
+        <div class="devs-grid">
+          <div>
+            <div class="code-title">HTML — paste before <code>&lt;/body&gt;</code></div>
+<pre class="code-block">&lt;script src="https://cdn.jsdelivr.net/gh/Mvnshi/
+WebAble-Plugin@main/dist/webable.js"
+        data-webable defer&gt;&lt;/script&gt;</pre>
+
+            <div class="code-title">npm</div>
+<pre class="code-block">npm install webable
+import 'webable';   // boots the widget</pre>
+
+            <div class="code-title">JavaScript API</div>
+<pre class="code-block">WebAble.open();
+WebAble.applyProfile('dyslexia');
+WebAble.apply('textSize', { value: 150 });
+WebAble.showLauncher(false);   // host opens via your menu</pre>
+
+            <p style="margin-top:18px;color:var(--text-2);font-size:14.5px">
+              Full reference: <a href="https://github.com/Mvnshi/WebAble-Plugin/blob/main/EMBED.md">EMBED.md</a> ·
+              contributing guide: <a href="https://github.com/Mvnshi/WebAble-Plugin/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>
+            </p>
+          </div>
+
+          <div>
+            <div class="code-title">By the numbers</div>
+            <div class="stat-row">
+              <div class="stat"><div class="stat-num blue">~35 KB</div><div class="stat-label">JS bundle (gzipped) — entire widget + CSS</div></div>
+              <div class="stat"><div class="stat-num green">0</div><div class="stat-label">runtime dependencies. Pure vanilla JS.</div></div>
+              <div class="stat"><div class="stat-num purple">21</div><div class="stat-label">accessibility tools, all implemented</div></div>
+              <div class="stat"><div class="stat-num">7</div><div class="stat-label">one-click profiles (Low Vision, Dyslexia, …)</div></div>
+              <div class="stat"><div class="stat-num green">0</div><div class="stat-label">network calls. Zero telemetry. All local.</div></div>
+              <div class="stat"><div class="stat-num blue">MIT</div><div class="stat-label">licensed. Fork, ship, modify freely.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── END CTA ───────────────────────────────────────────────────── -->
+    <section style="border-top:0">
+      <div class="wrap">
+        <div class="end-cta">
+          <h2>Make the web work for one more person today.</h2>
+          <p>
+            Add WebAble to your site. Install the extension for yourself. Or contribute a new tool —
+            most ship in ~15 lines.
+          </p>
+          <div class="cta-row" style="margin-bottom:0">
+            <button class="btn btn-primary" type="button" onclick="window.WebAble &amp;&amp; WebAble.open()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg>
+              Open the widget
+            </button>
+            <a class="btn btn-ghost" href="https://github.com/Mvnshi/WebAble-Plugin" target="_blank" rel="noopener">View source</a>
+            <a class="btn btn-ghost" href="https://github.com/sponsors/Mvnshi" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/></svg>
+              Sponsor
+            </a>
+          </div>
+        </div>
+
+        <p id="demo-page" style="text-align:center;color:var(--text-3);font-size:14px;margin-top:12px">
+          ↑ You're on the demo. Click the round button in the corner (or press <kbd style="font-family:var(--mono);font-size:12px;padding:2px 6px;border:1px solid var(--line-hi);border-radius:5px;color:var(--text-2)">Ctrl</kbd>+<kbd style="font-family:var(--mono);font-size:12px;padding:2px 6px;border:1px solid var(--line-hi);border-radius:5px;color:var(--text-2)">U</kbd>).
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <div>
+        <a href="https://github.com/Mvnshi/WebAble-Plugin">GitHub</a>
+        <a href="https://github.com/Mvnshi/WebAble-Plugin/blob/main/EMBED.md">Docs</a>
+        <a href="https://github.com/Mvnshi/WebAble-Plugin/blob/main/CONTRIBUTING.md">Contribute</a>
+        <a href="https://github.com/Mvnshi/WebAble-Plugin/blob/main/LICENSE">MIT License</a>
+        <a href="https://github.com/sponsors/Mvnshi">Sponsor</a>
+      </div>
+      <div>© 2026 WebAble contributors</div>
+    </div>
+  </footer>
+
+  <!-- Copy-snippet handler -->
+  <script>
+    (function () {
+      var btn = document.getElementById('copy-snippet');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var text = '<script src="https://cdn.jsdelivr.net/gh/Mvnshi/WebAble-Plugin@main/dist/webable.js" data-webable defer><' + '/script>';
+        var done = function () {
+          btn.classList.add('ok');
+          btn.querySelector('.copy-label').textContent = 'Copied';
+          setTimeout(function () { btn.classList.remove('ok'); btn.querySelector('.copy-label').textContent = 'Copy'; }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, done);
+        } else {
+          var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta);
+          ta.select(); try { document.execCommand('copy'); } catch (e) {}
+          ta.remove(); done();
+        }
+      });
+    })();
+  </script>
+
+  <!-- THE actual WebAble widget — installed on its own landing page. -->
+  <script src="./webable.js" data-webable defer></script>
+</body>
+</html>

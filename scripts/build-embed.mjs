@@ -54,10 +54,15 @@ const bundle =
   runtimeSrc + '\n';
 
 const distDir = join(root, 'dist');
+const docsDir = join(root, 'docs');
 if (!existsSync(distDir)) mkdirSync(distDir, { recursive: true });
+if (!existsSync(docsDir)) mkdirSync(docsDir, { recursive: true });
 
 writeFileSync(join(distDir, 'webable.js'), bundle);
 writeFileSync(join(distDir, 'webable.css'), banner.replace(/\.js/g, '.css') + combinedCss);
+// Mirror into docs/ so the GitHub Pages landing page can load ./webable.js
+// directly (works locally and on Pages without depending on the CDN cache).
+writeFileSync(join(docsDir, 'webable.js'), bundle);
 
 const kb = (n) => (n / 1024).toFixed(1) + ' KB';
 const jsBytes = Buffer.byteLength(bundle);
