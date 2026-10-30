@@ -1,33 +1,80 @@
 {
   "manifest_version": 3,
   "name": "WebAble: Accessibility Tools",
-  "version": "2.6.0",
-  "description": "Get guided through any site step by step, plus reader, dark mode, cookie banners hidden, fix-this-site, read-aloud, and AI.",
+  "version": "3.0.0",
+  "description": "Adapts any website to you: a type-what-you-need command bar, keyboard click hints, reader, dark mode, read-aloud, and Site Check.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "WebAble Accessibility Tools",
-    "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
-  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "options_page": "options.html",
-  "background": { "service_worker": "background.js" },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
-  "permissions": ["storage"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "externally_connectable": {
-    "matches": ["https://api.webable.cc/*", "https://webable.cc/*"]
+    "matches": [
+      "https://api.webable.cc/*",
+      "https://webable.cc/*"
+    ]
   },
-  "web_accessible_resources": [{ "resources": ["assets/*"], "matches": ["<all_urls>"] }],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "commands": {
+    "command-bar": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Open the command bar: type what you need"
+    },
+    "click-hints": {
+      "suggested_key": {
+        "default": "Alt+Shift+H",
+        "mac": "Alt+Shift+H"
+      },
+      "description": "Click anything by keyboard"
+    },
     "toggle-panel": {
-      "suggested_key": { "default": "Ctrl+Shift+U", "mac": "Command+Shift+U" },
+      "suggested_key": {
+        "default": "Ctrl+Shift+U",
+        "mac": "Command+Shift+U"
+      },
       "description": "Toggle the WebAble panel"
     }
   }

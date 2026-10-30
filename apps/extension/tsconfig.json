@@ -5,5 +5,5 @@
     "jsxImportSource": "preact",
     "types": []
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

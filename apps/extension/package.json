@@ -1,11 +1,12 @@
 {
   "name": "@webable/extension",
-  "version": "2.6.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "WebAble MV3 browser extension, injects the shared core+ui into pages. chrome.storage adapter.",
+  "description": "WebAble MV3 browser extension: injects the shared core and UI into pages, plus the power layer (command bar, click hints, Site Check).",
   "dependencies": {
     "@webable/core": "*",
-    "@webable/ui": "*"
+    "@webable/ui": "*",
+    "@webable/power": "*"
   }
 }

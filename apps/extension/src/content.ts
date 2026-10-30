@@ -49,6 +49,7 @@ import {
 } from '@webable/core/feeds';
 import { mountWidget, type WidgetApi } from '@webable/ui';
 import { DISABLED_KEY, disabledSites, readList, setDisabled } from './siteToggle';
+import { createPowerRig, type PowerRig } from './power';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const chrome: any;
@@ -523,6 +524,13 @@ function watchMessages(): void {
           void setDisabled(SITE, msg.on === false).then(() => sendResponse({ enabled: msg.on !== false }));
           return true;
         }
+        // The command bar, hints, insights and Site Check. Answered here, before
+        // the panel check below, because Site Check and insights still make
+        // sense on a site where the panel has not mounted yet.
+        if (power && typeof msg?.type === 'string') {
+          const handled = power.onMessage(msg as Parameters<PowerRig['onMessage']>[0], sendResponse);
+          if (handled !== undefined || POWER_MESSAGES.has(msg.type)) return handled;
+        }
         if (!live?.api) return undefined;
         const api = live.api;
         switch (msg?.type) {
@@ -553,6 +561,10 @@ function watchMessages(): void {
   }
 }
 
+/** Messages the power rig owns. Listed so the switch below never sees them. */
+const POWER_MESSAGES = new Set(['WEBABLE_COMMAND_BAR', 'WEBABLE_HINTS', 'WEBABLE_INSIGHTS', 'WEBABLE_RUN_INTENT', 'WEBABLE_SITE_CHECK', 'WEBABLE_HIGHLIGHT']);
+let power: PowerRig | null = null;
+
 function main(): void {
   // A frame whose top-level origin cannot be read is left exactly as its author
   // wrote it. There is no honest answer about whose settings to apply, and
@@ -562,7 +574,13 @@ function main(): void {
   if (!IS_TOP && !OUTER) return;
 
   watchStorage();
-  if (IS_TOP) watchMessages();
+  if (IS_TOP) {
+    power = createPowerRig(
+      () => (live ? { engine: live.engine, api: live.api } : null),
+      (on) => setDisabled(SITE, !on),
+    );
+    watchMessages();
+  }
   start();
 }
 

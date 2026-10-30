@@ -18,6 +18,7 @@ const testDirs = [
   'packages/core/test',
   'packages/ui/test',
   'packages/companion/test',
+  'packages/power/test',
   // The extension's tests are about what the product promises, not what it
   // renders: they hold the marketing page to the shipped feature registry.
   'apps/extension/test',

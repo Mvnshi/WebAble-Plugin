@@ -38,7 +38,7 @@
     "build:extension": "node apps/extension/build.mjs",
     "dev:widget": "node apps/widget/build.mjs --watch",
     "dev:ext": "node apps/extension/build.mjs --watch",
-    "typecheck": "tsc -p packages/core/tsconfig.json --noEmit && tsc -p packages/companion/tsconfig.json --noEmit && tsc -p packages/ui/tsconfig.json --noEmit && tsc -p apps/widget/tsconfig.json --noEmit && tsc -p apps/extension/tsconfig.json --noEmit",
+    "typecheck": "tsc -p packages/core/tsconfig.json --noEmit && tsc -p packages/companion/tsconfig.json --noEmit && tsc -p packages/ui/tsconfig.json --noEmit && tsc -p packages/power/tsconfig.json --noEmit && tsc -p apps/widget/tsconfig.json --noEmit && tsc -p apps/extension/tsconfig.json --noEmit",
     "test": "node apps/extension/build.mjs && node scripts/test-core.mjs && node apps/widget/build.mjs && node scripts/smoke-bundle.mjs",
     "test:extension": "node apps/extension/build.mjs && node scripts/test-extension.mjs",
     "a11y": "node scripts/a11y-audit.mjs",

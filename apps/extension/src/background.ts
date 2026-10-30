@@ -1,23 +1,70 @@
 /**
  * MV3 service worker. The toolbar click opens the popup (see manifest
- * default_popup); this worker only routes the keyboard command to the active
- * tab's content script, which toggles the shared panel. No business logic here.
+ * default_popup); this worker routes the keyboard commands to the active tab's
+ * content script, opens the extension's own pages when a tab asks, and shows
+ * the welcome page once on install. No business logic here.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const chrome: any;
 
-chrome.commands?.onCommand?.addListener((command: string) => {
-  if (command !== 'toggle-panel') return;
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs: Array<{ id?: number }>) => {
-    const id = tabs[0]?.id;
+/** Keyboard command name to the message the content script understands. */
+const COMMANDS: Record<string, string> = {
+  'toggle-panel': 'WEBABLE_TOGGLE',
+  'command-bar': 'WEBABLE_COMMAND_BAR',
+  'click-hints': 'WEBABLE_HINTS',
+};
+
+chrome.commands?.onCommand?.addListener((command: string, tab?: { id?: number }) => {
+  const type = COMMANDS[command];
+  if (!type) return;
+  const deliver = (id?: number) => {
     // frameId 0 is the top document. The content script runs in every frame now
     // (all_frames), and an unaddressed sendMessage broadcasts to all of them, so
     // without this the shortcut would try to toggle a panel in every ad iframe.
-    if (id != null) {
-      chrome.tabs.sendMessage(id, { type: 'WEBABLE_TOGGLE' }, { frameId: 0 }, () => void chrome.runtime.lastError);
-    }
-  });
+    if (id != null) chrome.tabs.sendMessage(id, { type }, { frameId: 0 }, () => void chrome.runtime.lastError);
+  };
+  if (tab?.id != null) deliver(tab.id);
+  else chrome.tabs.query({ active: true, currentWindow: true }, (tabs: Array<{ id?: number }>) => deliver(tabs[0]?.id));
 });
+
+/**
+ * First install opens the welcome page, once. An update does not: somebody who
+ * has used this for a year does not need to be onboarded again because the
+ * version number moved.
+ */
+chrome.runtime?.onInstalled?.addListener((details: { reason?: string }) => {
+  if (details?.reason === 'install') chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+});
+
+/**
+ * Requests from the content script for things only an extension page can do.
+ * Senders are checked to be this extension: onMessage is only reachable from
+ * our own contexts, but saying so here keeps it true if that ever changes.
+ */
+chrome.runtime?.onMessage?.addListener(
+  (msg: { type?: string }, sender: { id?: string; tab?: { id?: number; index?: number } }, sendResponse: (r: unknown) => void) => {
+    if (sender?.id && sender.id !== chrome.runtime.id) return undefined;
+    switch (msg?.type) {
+      case 'WEBABLE_OPEN_OPTIONS':
+        chrome.runtime.openOptionsPage();
+        return undefined;
+      case 'WEBABLE_OPEN_REPORT': {
+        const tab = sender?.tab;
+        if (tab?.id == null) return undefined;
+        chrome.tabs.create({ url: chrome.runtime.getURL(`report.html?tab=${tab.id}`), index: (tab.index ?? 0) + 1 });
+        return undefined;
+      }
+      case 'WEBABLE_GET_SHORTCUTS':
+        chrome.commands.getAll((cmds: Array<{ name?: string; shortcut?: string }>) => {
+          const by = (n: string) => cmds.find((c) => c.name === n)?.shortcut || undefined;
+          sendResponse({ bar: by('command-bar'), hints: by('click-hints'), panel: by('toggle-panel') });
+        });
+        return true;
+      default:
+        return undefined;
+    }
+  },
+);
 
 /**
  * Sign-in handoff from the checkout and sign-in pages.
