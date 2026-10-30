@@ -1,8 +1,8 @@
 # WebAble: Chrome Web Store submission kit
 
-Version 2.6.0 (MV3). Everything to paste into the Chrome Web Store developer
+Version 3.0.0 (MV3). Everything to paste into the Chrome Web Store developer
 dashboard. Copy stays in the WebAble voice (no em dashes). Accurate to the
-shipped `apps/extension` build.
+shipped `apps/extension` build (output in `extension/`).
 
 ---
 
@@ -10,7 +10,7 @@ shipped `apps/extension` build.
 
 - **Name:** WebAble: Accessibility Tools
 - **Summary (132 char max):**
-  Adapt any website to how you read, focus, and click: contrast, fonts, reading aids, read-aloud, and optional AI help.
+  Adapt any website to you. Type what you need, click anything by keyboard, read aloud, and check any site in one click.
 - **Category:** Accessibility
 - **Language:** English (United States)
 - **Privacy policy URL:** https://webable.cc/privacy
@@ -18,7 +18,35 @@ shipped `apps/extension` build.
 ## Detailed description (store listing)
 
 WebAble puts an accessibility menu on every website you visit, so you can adapt
-any page to how you read, focus, click, and understand.
+any page to how you read, focus, click, and understand. And it makes everybody
+faster: one shortcut and plain words do what used to take a menu, a mouse, and
+knowing what everything is called.
+
+New in 3.0
+
+- The command bar (Ctrl+Shift+K, Cmd+Shift+K on Mac). Type what you need in your
+  own words: "too bright", "text 150%", "I have dyslexia", "read this to me",
+  "2x speed", "go to pricing", "search for gift cards". It understands the
+  sentence on your device, with no AI and no network, and every change it makes
+  comes with an Undo. Type "#" to jump to any heading, section or link on the
+  page, or "?" to ask a question about the page (AI, optional).
+- Click anything by keyboard (Alt+Shift+H). Every link, button and field you can
+  see gets a short label; type it to click. Hold Shift to open a link in a new
+  tab. Number mode, with words to filter ("type 14", or "checkout"), is built
+  for voice control users.
+- Suggestions for the page you are on. The toolbar button reads the page for the
+  problems it actually has (a cookie banner over the article, a bright page
+  while your system is in dark mode, text under 14px, a long read, video playing
+  on its own) and offers the one fix for each. Nothing changes until you press it.
+- Site Check: a report on any page in one click, from your own browser.
+  Accessibility (measured colour contrast, button and link names, form labels,
+  WCAG 2.2 target size and more), search basics, whether AI answer engines are
+  allowed to read the site, and how fast this visit actually was. Every finding
+  says who it affects and how to fix it, can be shown on the page, and exports
+  as Markdown or PDF. It says plainly that automated checks catch only part of
+  what matters.
+- A welcome page that asks what gets in your way, in plain words, and shows the
+  change on the spot before saving it as your default.
 
 Three ways in: a small floating button WebAble adds to the corner of every page,
 the toolbar button (which opens a quick menu of profiles, with "Open menu" for
@@ -157,16 +185,21 @@ in the upload. Minimal set: `storage` + host access + a keyboard command.
 - **web_accessible_resources (`assets/*`)**: One file, the OpenDyslexic webfont,
   exposed so the dyslexia-font tool can apply it to the page being read.
 
-- **Keyboard command (Ctrl/Cmd+Shift+U)**: Opens and closes the accessibility
-  menu. (This is a manifest `commands` entry, not a permission, so the store
-  form has no field for it.)
+- **Keyboard commands**: Ctrl/Cmd+Shift+K opens the command bar, Alt+Shift+H
+  shows click hints, Ctrl/Cmd+Shift+U opens and closes the accessibility menu.
+  (These are manifest `commands` entries, not permissions, so the store form has
+  no field for them.) The same keys are also listened for inside the page, so
+  they work where the browser could not bind them; that can be switched off in
+  Settings.
 
 - Permissions deliberately NOT requested: `activeTab` (redundant: the content
   script already runs via host access), `tabs`, `scripting`, `cookies`,
   `webRequest`, `history`, `bookmarks`. No analytics, no tracking. The code does
-  call `chrome.tabs.query`, `chrome.tabs.sendMessage` and
-  `chrome.tabs.captureVisibleTab`; none of those need the `tabs` permission, and
-  captureVisibleTab is satisfied by the `<all_urls>` host access above.
+  call `chrome.tabs.query`, `chrome.tabs.sendMessage`, `chrome.tabs.create`,
+  `chrome.tabs.update` and `chrome.tabs.captureVisibleTab`; none of those need
+  the `tabs` permission, and captureVisibleTab is satisfied by the `<all_urls>`
+  host access above. `chrome.tabs.create` opens the welcome page once on
+  install, the Site Check report, and the browser's own shortcut settings page.
 
 - **Remote code:** None. All extension code is packaged in the upload, and the
   one bundled font ships in the upload too. Network requests, all of them
@@ -197,6 +230,21 @@ in the upload. Minimal set: `storage` + host access + a keyboard command.
      the user's own key, or api.webable.cc for a subscriber. It sends no page
      address, nothing about what was watched, and nothing about the cards the
      local sort did place. With the switch off, no such request is ever made.
+  6. Site Check, only when the user runs it, fetches `/robots.txt` and
+     `/llms.txt` from the site being checked (the same origin as the page, with
+     no cookies), to report whether AI crawlers are allowed in. Everything else
+     it reports is read from the page already open. The report is built on the
+     device and sent nowhere.
+  7. Links, never requests: the Site Check report links to the W3C's WCAG
+     explanations (`www.w3.org`) and, for site owners, to WebAble's services on
+     `webable.cc`. Nothing is fetched from either host. Those links open only
+     when clicked, carry `utm_` campaign parameters, and only the "Run the deep
+     scan" link includes the address of the page that was checked, so the scan
+     on webable.cc knows what to check. The welcome page links to the source code
+     on GitHub.
+  8. The command bar's "search this site" types into the site's own search box
+     and submits it, exactly as if the user had typed it there. WebAble makes no
+     request of its own.
 
 ## Data usage disclosures (Privacy practices tab)
 
@@ -259,6 +307,9 @@ Certify the following:
   the browser's built-in speech recognition, which in Chrome sends the recorded
   audio to Google's speech service and prompts for microphone permission on the
   current site. WebAble neither receives nor stores audio.
+- **Command bar usage counts:** how many times each command was used, kept in
+  chrome.storage.local so frequent commands rank first. Never transmitted.
+  Cleared with everything else by "Clear all WebAble data".
 - **Stored on the device, never transmitted:** the friction log the user creates
   by flagging something (the page address with tracking parameters stripped, a
   short reason, a description of the element, and an optional screenshot the
@@ -280,17 +331,21 @@ Also certify:
 
 ## Screenshots (you capture these)
 
-Load the unpacked extension (`apps/extension/dist`), open a content-rich page, then:
-1. Open the panel (toolbar button) and screenshot it over the page.
-2. Apply the "Vision impaired" profile and screenshot the adapted page.
-3. Screenshot the toolbar popup (profiles + Open menu).
-4. Screenshot the options page (Settings).
+Load the unpacked extension (`extension/`), open a content-rich page, then:
+1. Open the command bar (Ctrl+Shift+K), type "too bright", and screenshot it.
+2. Press Alt+Shift+H and screenshot the click hints.
+3. Screenshot the toolbar popup on a page with suggestions.
+4. Run Site Check and screenshot the report.
+5. Open the panel (toolbar button, All tools) and screenshot it over the page.
+The README's screenshots in `docs/screenshots/` are generated by
+`npm run screenshots` and are a good starting point.
 Crop/scale each to 1280×800 (or 640×400) PNG.
 
 ## Submission steps
 
 1. `npm run build:extension`
-2. `npm run package:extension` (produces `apps/extension/store/webable-extension-vX.Y.Z.zip`)
+2. `npm run package:extension` (produces `apps/extension/store/webable-extension-vX.Y.Z.zip`).
+   A tagged release on GitHub (`v3.0.0`) builds the same zip in CI and attaches it.
 3. Chrome Web Store dashboard (developer account, one-time 5 USD fee) → New item →
    upload the zip.
 4. Fill listing (above), upload icon + promo tile + screenshots, set privacy

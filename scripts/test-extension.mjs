@@ -1068,6 +1068,249 @@ await check('the options page lists what is switched off, and can switch it back
 });
 
 // ---------------------------------------------------------------------------
+console.log('\nthe power layer: command bar, click hints, insights, Site Check');
+
+/** Send a message to the tab whose URL contains `needle`, from an extension page. */
+async function tell(needle, msg) {
+  const driver = await context.newPage();
+  await driver.goto(optionsUrl);
+  const res = await driver.evaluate(
+    ([n, m]) =>
+      new Promise((r) => {
+        chrome.tabs.query({}, (tabs) => {
+          const target = tabs.find((t) => t.url && t.url.includes(n));
+          if (!target) return r('no tab');
+          chrome.tabs.sendMessage(target.id, m, { frameId: 0 }, (res) => r(res ?? null));
+          setTimeout(() => r('no answer'), 8000);
+        });
+      }),
+    [needle, msg],
+  );
+  await driver.close();
+  return res;
+}
+
+/** A clean slate: everything earlier in this file leaves settings behind. */
+async function clearAll() {
+  const p = await context.newPage();
+  await p.goto(optionsUrl);
+  await p.evaluate(() => Promise.all([new Promise((r) => chrome.storage.local.clear(r)), new Promise((r) => chrome.storage.sync.clear(r))]));
+  await p.close();
+}
+
+/** The command bar lives in an open shadow root so it can be driven here. */
+const barInput = (page) => page.locator('webable-command').locator('input.wa-cmd-input');
+
+await check('the install opens the welcome page, once', async () => {
+  // onInstalled fired when this context loaded the extension at the top of the
+  // file. A second welcome tab would mean it fires on something else too.
+  const welcome = context.pages().filter((p) => p.url().endsWith('/welcome.html'));
+  eq(welcome.length, 1, 'exactly one welcome tab');
+  await welcome[0].close();
+});
+
+await clearAll();
+
+await check('the command bar turns a need into the tool for it, and Undo takes it back', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  await page.keyboard.press('Control+Shift+K');
+  await barInput(page).waitFor({ timeout: 5000 });
+  ok(await barInput(page).evaluate((el) => el === el.getRootNode().activeElement), 'the input has focus');
+  await page.keyboard.type('this is way too bright');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-webable-dark'), null, { timeout: 5000 });
+  const undo = page.locator('webable-command').locator('.wa-toast-undo');
+  await undo.waitFor({ timeout: 3000 });
+  await undo.click();
+  await page.waitForFunction(() => !document.documentElement.hasAttribute('data-webable-dark'), null, { timeout: 5000 });
+  await page.close();
+});
+
+await check('the command bar sets a number it is given, within the tool limits', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  await page.keyboard.press('Control+Shift+K');
+  await barInput(page).waitFor({ timeout: 5000 });
+  await page.keyboard.type('text 150%');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-webable-fontsize'), null, { timeout: 5000 });
+  const scale = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--wa-font-scale') || document.documentElement.style.cssText);
+  ok(/1\.5|150/.test(scale), `the scale is 150%, saw ${scale}`);
+  await tell('power.html', { type: 'WEBABLE_RESET' });
+  await page.close();
+});
+
+await check('"go to" jumps to a heading and moves keyboard focus there', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  await page.keyboard.press('Control+Shift+K');
+  await barInput(page).waitFor({ timeout: 5000 });
+  await page.keyboard.type('go to pricing');
+  await page.waitForTimeout(150);
+  await page.keyboard.press('Enter');
+  // "go to pricing" is a find intent: the first Enter opens find mode with
+  // the query, the second runs the top page target.
+  await page.waitForTimeout(150);
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.activeElement && document.activeElement.id === 'pricing', null, { timeout: 5000 });
+  await page.close();
+});
+
+await check('"search for" types into the site\'s own search box and submits it', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  await page.keyboard.press('Control+Shift+K');
+  await barInput(page).waitFor({ timeout: 5000 });
+  await page.keyboard.type('search for trail boots');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.getElementById('searched')?.textContent === 'trail boots', null, { timeout: 5000 });
+  await page.close();
+});
+
+await check('keystrokes typed into the bar never reach the page underneath', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  await page.evaluate(() => {
+    window.__leaked = 0;
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'j') window.__leaked++;
+    });
+  });
+  await page.keyboard.press('Control+Shift+K');
+  await barInput(page).waitFor({ timeout: 5000 });
+  await page.keyboard.type('jjj');
+  eq(await page.evaluate(() => window.__leaked), 0, 'the site saw none of the typing');
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.querySelector('webable-command')?.shadowRoot?.querySelector('.wa-cmd'), null, { timeout: 3000 });
+  await page.close();
+});
+
+await check('click hints in number mode filter by words and click the one left', async () => {
+  const setup = await context.newPage();
+  await setup.goto(optionsUrl);
+  await setup.evaluate(() => new Promise((r) => chrome.storage.sync.set({ 'webable:power': { hintMode: 'numbers', pageShortcuts: true } }, r)));
+  await setup.close();
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  // The cookie banner sits over the bottom of the page; the button is above it.
+  await page.evaluate(() => document.getElementById('cookie').remove());
+  await page.evaluate(() => document.getElementById('target-button').scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(200);
+  await page.keyboard.press('Alt+Shift+H');
+  await page.waitForSelector('webable-hints', { state: 'attached', timeout: 5000 });
+  await page.keyboard.type('book');
+  await page.waitForFunction(() => document.getElementById('target-button').textContent === 'Clicked', null, { timeout: 5000 });
+  eq(await page.locator('webable-hints').count(), 0, 'the hints are gone after the click');
+  await page.close();
+});
+
+await check('Escape takes the hints away and clicks nothing', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  await page.keyboard.press('Alt+Shift+H');
+  await page.waitForSelector('webable-hints', { state: 'attached', timeout: 5000 });
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('webable-hints', { state: 'detached', timeout: 3000 });
+  eq(await page.locator('#target-button').textContent(), 'Book a trip', 'nothing was clicked');
+  await page.close();
+});
+
+await check('insights name the problems this page actually has', async () => {
+  // Earlier checks leave tools on for this site, and a tool that is on is
+  // rightly never suggested. Start from nothing.
+  await clearAll();
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  const res = await tell('power.html', { type: 'WEBABLE_INSIGHTS' });
+  const ids = (res?.insights || []).map((i) => i.id);
+  ok(ids.includes('cookies'), `the cookie banner is noticed, saw ${ids.join(', ')}`);
+  ok(ids.includes('small-text'), `the 13px body text is noticed, saw ${ids.join(', ')}`);
+  ok(ids.includes('article'), `the long read is noticed, saw ${ids.join(', ')}`);
+  ok(!ids.includes('zoom'), 'and a problem the page does not have is not invented');
+  await page.close();
+});
+
+await check('Site Check measures the rendered page and finds what is wrong with it', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  const r = await tell('power.html', { type: 'WEBABLE_SITE_CHECK' });
+  ok(r && typeof r.overall === 'number', `a report came back, saw ${JSON.stringify(r).slice(0, 120)}`);
+  const status = Object.fromEntries(r.checks.map((c) => [c.id, c.status]));
+  eq(status['img-alt'], 'fail', 'the image with no alt');
+  eq(status['button-name'], 'fail', 'the icon button with no name');
+  eq(status['form-label'], 'fail', 'the field with only a placeholder');
+  eq(status['contrast'], 'fail', 'the light grey text, measured from computed colour');
+  eq(status['html-lang'], 'pass', 'the page that does declare its language');
+  eq(status['headings'], 'warn', 'the skipped heading level');
+  ok(r.vitals.domNodes > 50, 'vitals were read from this page');
+  const hl = await tell('power.html', { type: 'WEBABLE_HIGHLIGHT', id: 'button-name', index: 0 });
+  eq(hl?.found, true, 'and the report can point at the element');
+  await page.close();
+});
+
+await check('the report page renders a score for the tab it was opened for', async () => {
+  const page = await context.newPage();
+  await page.goto(`${origin}/power.html`);
+  await page.waitForSelector('#webable-widget-root', { state: 'attached' });
+  const report = await context.newPage();
+  await report.goto(`chrome-extension://${id}/report.html`);
+  const tabId = await report.evaluate(() => new Promise((r) => chrome.tabs.query({}, (ts) => r(ts.find((t) => t.url && t.url.includes('power.html'))?.id))));
+  await report.goto(`chrome-extension://${id}/report.html?tab=${tabId}`);
+  await report.waitForSelector('.hero h1', { timeout: 10000 });
+  ok((await report.locator('.finding').count()) > 3, 'findings are listed');
+  ok((await report.locator('a[href*="webable.cc/business"]').count()) >= 1, 'site owners are offered help after the findings');
+  await report.close();
+  await page.close();
+});
+
+await check('the welcome page saves its choices as the default for every site', async () => {
+  await clearAll();
+  const welcome = await context.newPage();
+  await welcome.goto(`chrome-extension://${id}/welcome.html`);
+  await welcome.getByText('Text is often too small').click();
+  await welcome.locator('#save').click();
+  await welcome.locator('#step-2').waitFor({ timeout: 5000 });
+  await welcome.close();
+  const page = await context.newPage();
+  await page.goto(`${origin}/static.html`);
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-webable-fontsize'), null, { timeout: 5000 });
+  await page.close();
+  await clearAll();
+});
+
+await check('the popup search answers in plain words', async () => {
+  const site = await context.newPage();
+  await site.goto(`${origin}/power.html`);
+  await site.waitForSelector('#webable-widget-root', { state: 'attached' });
+  const page = await context.newPage();
+  // A real popup belongs to the tab it was opened over. Opened as a tab of its
+  // own in automation it would find itself, so point it at the site.
+  await page.addInitScript(() => {
+    const query = chrome.tabs.query.bind(chrome.tabs);
+    chrome.tabs.query = (_info, cb) => query({}, (tabs) => cb(tabs.filter((t) => t.url && t.url.includes('power.html'))));
+  });
+  await page.goto(popupUrl);
+  await page.locator('#q').waitFor({ state: 'visible', timeout: 5000 });
+  await page.fill('#q', 'too bright');
+  const first = await page.locator('.result-title').first().textContent();
+  eq(first, 'Turn on Dark mode', 'the top result');
+  ok((await page.locator('.tip').count()) >= 1, 'and the page it is over got suggestions');
+  await page.close();
+  await site.close();
+});
+
+// ---------------------------------------------------------------------------
 await context.close();
 server.close();
 rmSync(profile, { recursive: true, force: true });

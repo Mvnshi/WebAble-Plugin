@@ -18,7 +18,7 @@
  *     the page's own text scaling cannot break it.
  */
 import { render, type JSX } from 'preact';
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { rank, words } from './fuzzy';
 import { parseIntent, type Intent } from './intents';
 import { catalogue, describeIntent, pageCommands, run, type Command, type Outcome, type PowerHost } from './commands';
@@ -289,7 +289,10 @@ function Bar({ initial, opts, onClose, onOutcome }: BarProps): JSX.Element {
   }, [query, mode]);
 
   useEffect(() => setActive(0), [query, mode]);
-  useEffect(() => {
+  // Layout effect, not effect: a fast typist presses the shortcut and starts
+  // typing in the same breath, and a plain effect runs after paint, by which
+  // time the first letters have gone to the page underneath.
+  useLayoutEffect(() => {
     input.current?.focus();
     const len = input.current?.value.length || 0;
     input.current?.setSelectionRange(len, len);
