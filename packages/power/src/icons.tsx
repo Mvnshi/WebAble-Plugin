@@ -5,7 +5,7 @@
  * tool's icon in the bar is always the icon it has in the panel.
  */
 import type { JSX } from 'preact';
-import { Icon as PanelIcon } from '@webable/ui';
+import { Icon as PanelIcon, BrandGlyph } from '@webable/ui';
 
 const svg = (size: number, children: JSX.Element) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -27,11 +27,12 @@ const OWN: Record<string, (size: number) => JSX.Element> = {
   speaker: (s) => svg(s, <><path d="M4 9h4l5-4v14l-5-4H4z" /><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" /></>),
   sparkle: (s) => svg(s, <><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z" /></>),
   enter: (s) => svg(s, <><path d="M20 5v7a3 3 0 0 1-3 3H6" /><path d="M10 11l-4 4 4 4" /></>),
+  // The real brand mark, the same one the launcher wears, so the bar reads as
+  // part of the same product rather than a lookalike.
   logo: (s) => (
-    <svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true">
-      <rect width="24" height="24" rx="7" fill="#1e40af" />
-      <path d="M6.5 8.5l2.4 7 3.1-6 3.1 6 2.4-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
+    <span style={{ display: 'grid', placeItems: 'center', width: `${s}px`, height: `${s}px`, borderRadius: `${Math.round(s * 0.3)}px`, background: '#0a1324' }}>
+      <BrandGlyph size={Math.round(s * 0.82)} />
+    </span>
   ),
 };
 

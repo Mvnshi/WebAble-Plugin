@@ -1,26 +1,26 @@
-<!-- Thanks for contributing to WebAble! Keep PRs focused and describe the
-     user-facing change. -->
+<!-- Thanks for contributing to WebAble. Keep pull requests focused and describe
+     the change for the person who uses it. -->
 
-## What does this change?
+## What changes for the person using WebAble?
 
-<!-- One or two sentences. What's different for a user of the widget/extension? -->
+<!-- One or two sentences. -->
 
 ## Type
 
 - [ ] Bug fix
-- [ ] New tool / feature
+- [ ] New tool, command bar phrase, or Site Check rule
 - [ ] Docs
-- [ ] Refactor / build / CI
+- [ ] Refactor, build, or CI
 
 ## Checklist
 
-- [ ] `npm run build` run, and the updated `dist/` is committed
-- [ ] `npm run smoke` passes
-- [ ] Tried it in `examples/embed-demo.html`
-- [ ] Tested with a screen reader if it affects the panel or page semantics (NVDA/VoiceOver)
-- [ ] Changes stay in the `.webable-*` namespace and don't poison the host page's a11y tree
-- [ ] No claims of "WCAG compliance" / no fake badges / no cloaking
+- [ ] `npm run check` passes
+- [ ] Rebuilt `extension/` and `dist/` are committed with the source change
+- [ ] Tried it in the browser (load `extension/` unpacked)
+- [ ] Tried it with a keyboard, and with a screen reader if it touches the panel or page semantics
+- [ ] Anything new that leaves the device is in PRIVACY.md and the store listing
+- [ ] No compliance claims, no acting on someone's behalf without asking
 
 ## Notes for reviewers
 
-<!-- Anything tricky, screenshots, or follow-ups. -->
+<!-- Anything tricky, screenshots, follow-ups. -->

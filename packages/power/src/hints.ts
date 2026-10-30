@@ -173,7 +173,9 @@ const STYLE = `
 :host { all: initial; }
 .layer { position: fixed; inset: 0; pointer-events: none; z-index: 2147483646; }
 .hint {
-  position: fixed; transform: translate(-4px, -4px);
+  /* Hung off the top-left corner rather than laid over it, so the label covers
+     the element's edge and not the first letters of what it says. */
+  position: fixed; transform: translate(-70%, -55%);
   font: 700 13px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   letter-spacing: .04em; text-transform: uppercase;
   padding: 3px 5px 3px; border-radius: 6px;
@@ -200,7 +202,7 @@ const STYLE = `
 .bar .q { color: #ffd84d; font-family: ui-monospace, Menlo, monospace; }
 @media (prefers-reduced-motion: no-preference) {
   .hint { animation: pop .12s ease-out; }
-  @keyframes pop { from { transform: translate(-4px, -4px) scale(.6); opacity: 0; } }
+  @keyframes pop { from { transform: translate(-70%, -55%) scale(.6); opacity: 0; } }
 }
 `;
 
@@ -251,8 +253,8 @@ export function startHints(doc: Document, opts: HintOptions = {}): HintSession {
       const node = doc.createElement('div');
       node.className = mode === 'numbers' ? 'hint num' : 'hint';
       const r = t.el.getBoundingClientRect();
-      node.style.left = `${Math.max(4, r.left)}px`;
-      node.style.top = `${Math.max(4, r.top)}px`;
+      node.style.left = `${Math.max(14, r.left)}px`;
+      node.style.top = `${Math.max(10, r.top)}px`;
       layer.appendChild(node);
       return { el: t.el, label: labels[i], node };
     });

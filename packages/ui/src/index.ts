@@ -11,3 +11,4 @@ export { LAUNCHER_CSS } from './styles';
 export { Icon } from './icons';
 export { t, setLocale, getLocale } from './i18n';
 export type { Locale } from './i18n';
+export { BrandGlyph } from './brandGlyph';

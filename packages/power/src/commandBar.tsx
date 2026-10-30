@@ -278,10 +278,10 @@ function Bar({ initial, opts, onClose, onOutcome }: BarProps): JSX.Element {
       seen.add(key(c));
       out.push(c);
     }
-    // Three or more words that are not obviously a command read as a question.
-    // Offering "ask" last costs nothing and is the escape hatch for anything
-    // the phrasebook and the search both missed.
-    if (words(q).length >= 3 && !out.some((c) => c.intent.kind === 'action' && c.intent.id === 'ask')) {
+    // Three or more words that the phrasebook did not understand read as a
+    // question. Offering "ask" last is the escape hatch for anything it and
+    // the search both missed; when the phrasebook did understand, it is noise.
+    if (words(q).length >= 3 && !intents.length && !out.some((c) => c.intent.kind === 'action' && c.intent.id === 'ask')) {
       const ask = describeIntent(host.engine, { kind: 'action', id: 'ask', arg: q });
       if (ask) out.push({ ...ask, group: 'Actions' });
     }
@@ -500,7 +500,10 @@ function Bar({ initial, opts, onClose, onOutcome }: BarProps): JSX.Element {
                       <Glyph name={c.icon} size={17} />
                     </span>
                     <span class="wa-cmd-title">
-                      <Highlight text={c.title} query={mode === 'find' ? query.replace(/^[#/]\s*/, '') : query} />
+                      {/* A generated title ("Turn on Dark mode") did not match the
+                          query letter by letter, so marking letters in it would
+                          be marking coincidences. */}
+                      <Highlight text={c.title} query={c.group === 'Best match' || c.id.startsWith('intent:') ? '' : mode === 'find' ? query.replace(/^[#/]\s*/, '') : query} />
                     </span>
                     {c.meta ? <span class={`wa-cmd-meta${c.meta === 'On' || c.meta === 'Active' ? ' is-on' : ''}`}>{c.meta}</span> : null}
                     {i === active ? (

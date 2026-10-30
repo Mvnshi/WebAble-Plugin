@@ -45,7 +45,8 @@
     "gate:bundle": "node apps/widget/build.mjs && node scripts/bundle-gate.mjs",
     "check": "npm run typecheck && npm run test && npm run test:extension && node scripts/bundle-gate.mjs && node scripts/a11y-audit.mjs && node scripts/no-em-dash.mjs",
     "demo": "node apps/widget/build.mjs && node scripts/serve-demo.mjs",
-    "package:extension": "node scripts/package-extension.mjs"
+    "package:extension": "node scripts/package-extension.mjs",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
     "axe-core": "4.11.4",

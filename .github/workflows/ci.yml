@@ -5,28 +5,38 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-test:
+  check:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: npm
 
-      - name: Syntax check (engine, runtime, bundle)
+      - name: Install
+        run: npm ci
+
+      - name: Install Chromium for the real-browser tests
+        run: npx playwright install --with-deps chromium
+
+      # Types, unit tests, real-browser tests, widget budget, axe audit, house style.
+      - name: npm run check
         run: npm run check
 
-      - name: Engine smoke test
-        run: npm run smoke
-
-      - name: Build the widget
-        run: npm run build
-
-      - name: dist/ is in sync with source
+      # extension/ is what people download and load unpacked, and dist/ is what
+      # the jsDelivr snippet serves. Both are built output that is committed, so
+      # a source change without a rebuild would ship stale code to everyone.
+      - name: Built output matches the source
         run: |
-          if ! git diff --exit-code -- dist/; then
-            echo "::error::dist/ is out of date. Run 'npm run build' and commit the result."
+          npm run build
+          if ! git diff --exit-code --stat -- extension dist; then
+            echo "::error::extension/ or dist/ is out of date. Run 'npm run build' and commit the result."
             exit 1
           fi
