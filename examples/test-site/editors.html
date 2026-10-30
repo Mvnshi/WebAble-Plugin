@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editors vs copy-blocking · WebAble test</title>
+    <script src="/widget.js" async></script>
+    <style>
+      body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 40px; max-width: 70ch; }
+      .editor, textarea { display: block; width: 100%; min-height: 60px; padding: 10px;
+        border: 1px solid #999; border-radius: 6px; margin: 8px 0 18px; font: inherit; }
+      .locked { user-select: none; }
+    </style>
+  </head>
+  <body>
+    <h1>Unlock selection, without breaking the editors</h1>
+
+    <p>
+      This page blocks copy the way a paywalled article does: a capture-phase
+      handler on document that cancels the event. Unlock selection has to defeat
+      that. It must NOT defeat the editors below, whose own copy handler IS the
+      copy: cutting it off is what broke Google Docs.
+    </p>
+
+    <h2>Ordinary content (the site blocks copying it)</h2>
+    <p id="article" class="locked">Article text the site does not want you to copy.</p>
+
+    <h2>A rich text editor</h2>
+    <div id="editor" class="editor" contenteditable="true">Editable content.</div>
+
+    <h2>A canvas-style editor that marks its region</h2>
+    <div id="surface" class="editor" role="textbox" aria-multiline="true">Editor surface.</div>
+
+    <h2>A form field</h2>
+    <textarea id="field">Text in a form field.</textarea>
+
+    <h2>An editor built as a web component</h2>
+    <p>
+      Its editable surface is inside a shadow root, so an event that reaches
+      document has been retargeted: <code>e.target</code> is the host element,
+      which looks like a plain div. Reading target instead of the composed path
+      is how the guard above passes and the editor's own copy handler gets cut
+      off anyway, for every editor written this way.
+    </p>
+    <wa-editor id="shadow-editor"></wa-editor>
+
+    <script>
+      customElements.define(
+        'wa-editor',
+        class extends HTMLElement {
+          connectedCallback() {
+            const root = this.attachShadow({ mode: 'open' });
+            root.innerHTML =
+              '<style>.surface{display:block;min-height:60px;padding:10px;border:1px solid #999;' +
+              'border-radius:6px;margin:8px 0 18px;font:inherit}</style>' +
+              '<div class="surface" contenteditable="true">Editable content inside a component.</div>';
+            root.querySelector('.surface').addEventListener('copy', function () {
+              window.__log.shadowEditorHandlerRan++;
+            });
+          }
+        },
+      );
+    </script>
+
+    <script>
+      // The site's own blocker, and the editors' own handlers. Both record
+      // whether they ran, so the test can tell which survived.
+      window.__log = {
+        siteBlockerRan: 0,
+        editorHandlerRan: 0,
+        surfaceHandlerRan: 0,
+        fieldHandlerRan: 0,
+        shadowEditorHandlerRan: 0,
+      };
+      document.addEventListener('copy', function (e) {
+        window.__log.siteBlockerRan++;
+        e.preventDefault();
+      }, true);
+      document.getElementById('editor').addEventListener('copy', function () { window.__log.editorHandlerRan++; });
+      document.getElementById('surface').addEventListener('copy', function () { window.__log.surfaceHandlerRan++; });
+      document.getElementById('field').addEventListener('copy', function () { window.__log.fieldHandlerRan++; });
+      document.getElementById('editor').addEventListener('dragstart', function () { window.__log.dragRan = 1; });
+
+      // The same blocker, registered late. stopImmediatePropagation only stops
+      // listeners registered AFTER ours on the same node, so the one above is
+      // beyond reach: it is bound while the document parses, and the extension's
+      // setting arrives after an async storage read. This one is what the
+      // feature can actually defeat, and the difference between the two is the
+      // documented limit rather than a bug.
+      window.__log.lateBlockerRan = 0;
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          document.addEventListener('copy', function (e) {
+            window.__log.lateBlockerRan++;
+            e.preventDefault();
+          }, true);
+          window.__lateBlockerReady = true;
+        }, 300);
+      });
+    </script>
+  </body>
+</html>

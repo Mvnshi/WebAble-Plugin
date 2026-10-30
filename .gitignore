@@ -1,22 +1,17 @@
-# Dependencies (the widget itself has none; this is for tooling/backend)
 node_modules/
-
-# Logs & caches
+.test-dist/
 *.log
-npm-debug.log*
-.npm/
-.cache/
-
-# OS / editor cruft
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
 *.swp
-
-# Env files (never commit secrets)
 .env
 .env.*
-!.env.example
 
-# NOTE: dist/ is intentionally committed — the CDN snippet serves it directly.
+# The Chrome Web Store upload is rebuilt by `npm run package:extension`.
+apps/extension/store/*.zip
+
+# extension/ and dist/ are committed on purpose. extension/ is what someone
+# who downloads this repo loads unpacked, and dist/ is what the jsDelivr
+# snippet serves. CI fails if either drifts from the source.

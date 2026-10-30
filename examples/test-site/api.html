@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Queued API · WebAble test</title>
+    <script src="/widget.js" data-webable-hide-launcher="true" async></script>
+    <style>
+      body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 40px; max-width: 60ch; }
+      button { font: inherit; padding: 10px 16px; border-radius: 8px; border: 1px solid #999; background: #fff; cursor: pointer; }
+      code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>Driving the panel from your own button</h1>
+    <p>
+      The launcher is hidden. This button is the exact snippet from the widget
+      page, wired before the async module has loaded, which is what a visitor
+      who clicks immediately would hit.
+    </p>
+
+    <!-- Pressed before boot.js lands, this used to throw: window.WebAble did
+         not exist yet. The loader now installs a queue, so the press is
+         replayed the moment the module arrives. -->
+    <button onclick="WebAble.open()">Accessibility</button>
+
+    <p id="log"></p>
+    <script>
+      // Fire one call at parse time, before the module can possibly be ready,
+      // and record what happened.
+      var early = { threw: null, queued: null };
+      try {
+        early.queued = !!(window.WebAble && window.WebAble.__queued);
+        WebAble.set('readableFont', true);
+      } catch (e) {
+        early.threw = String(e);
+      }
+      window.__EARLY__ = early;
+      document.addEventListener('webable:ready', function () {
+        document.getElementById('log').textContent = 'webable:ready fired';
+        window.__READY__ = true;
+      });
+    </script>
+
+  </body>
+</html>

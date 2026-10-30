@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tailwind · WebAble test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased">
+    <div class="max-w-3xl mx-auto px-6 py-12 pb-32">
+      <p class="text-sm font-semibold tracking-widest text-indigo-600 uppercase">Tailwind scenario</p>
+      <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900">Utility-class layout</h1>
+      <p class="mt-4 text-lg text-slate-600">This page is styled entirely with Tailwind utilities and
+        loads the widget with a custom accent and a top-left launcher via <code>data-*</code> attributes.</p>
+
+      <div class="mt-10 grid sm:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900">Text scaling</h2>
+          <p class="mt-1 text-sm text-slate-500">Tailwind uses rem units, so the text-size tool scales this cleanly.</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900">Focus rings</h2>
+          <a href="#" class="mt-2 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-white">A focusable button</a>
+        </div>
+      </div>
+
+      <img class="mt-8 w-full rounded-xl"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='280'%3E%3Crect width='760' height='280' fill='%230f766e'/%3E%3C/svg%3E" alt="" />
+    </div>
+    <script
+      src="/widget.js"
+      data-webable-color="#0f766e"
+      data-webable-position="top-left"
+      data-webable-name="Access"
+      async
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Branding · WebAble test</title>
+    <!-- A pale brand colour. --on-accent used to be hard-coded white, so the
+         launcher glyph was white on near-white and effectively invisible.
+         attribution=false is the white-label path: the WebAble mark must go. -->
+    <script src="/widget.js"
+            data-webable-color="#ffe066"
+            data-webable-name="Acme Access"
+            data-webable-attribution="false"
+            async></script>
+    <style>body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 40px; max-width: 60ch; }</style>
+  </head>
+  <body>
+    <h1>Pale accent, white-labelled</h1>
+    <p>The launcher should be readable and must not show the WebAble mark.</p>
+  </body>
+</html>

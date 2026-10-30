@@ -1,0 +1,11 @@
+{
+  "name": "@webable/widget",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WebAble embeddable widget, tiny launcher-first loader + lazy-loaded panel chunk. CDN target.",
+  "dependencies": {
+    "@webable/core": "*",
+    "@webable/ui": "*"
+  }
+}

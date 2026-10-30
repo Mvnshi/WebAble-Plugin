@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WebAble fixture: shapes real sites actually have</title>
+<style>
+  /*
+    Three things found by driving the real extension against real sites, kept
+    here so they stay found. Each one is a shape a real site has, not a
+    contrivance.
+  */
+
+  /* 1. web.dev. The body carries its own height and the document overflows it.
+        Forcing overflow:auto on <html> here stops <body>'s overflow reaching
+        the viewport, the document stops being the scroller, and the page
+        freezes. overflow:visible does not. */
+  html, body { margin: 0; }
+  body {
+    height: 100vh;
+    font: 16px/1.6 -apple-system, system-ui, sans-serif;
+  }
+
+  /* 2. MDN. A sticky element whose own class name says "header", written the
+        BEM way, so the old `-header` / `header-` patterns both miss it. */
+  .left-sidebar__header {
+    position: sticky;
+    top: 0;
+    background: #eef;
+    padding: 8px;
+    z-index: 5;
+  }
+  /* The control: a plain sticky header the old selector already caught. */
+  header.site-header { position: sticky; top: 40px; background: #efe; padding: 8px; }
+
+  /* 3. BBC, react.dev, web.dev. Body copy sized in absolute px, which the
+        root-font-size scale cannot reach. */
+  p.fixed { font-size: 14px; }
+  p.scaled { font-size: 1rem; }
+
+  .tall { height: 4000px; padding: 12px; }
+
+  /* A consent banner that locks scrolling, the way a real CMP does. */
+  #onetrust-banner-sdk {
+    position: fixed; inset: auto 0 0 0; background: #222; color: #fff; padding: 16px;
+  }
+  body.locked { overflow: hidden; }
+</style>
+</head>
+<body class="locked">
+  <div class="left-sidebar__header">Sticky, named the BEM way</div>
+  <header class="site-header">Sticky, named the plain way</header>
+
+  <div class="tall">
+    <h1>Shapes real sites actually have</h1>
+    <p class="fixed" id="fixed">
+      This paragraph is sized in absolute px, the way a lot of real body copy
+      still is. The text-size tool scales the root font size, so it cannot
+      reach this. That is a real limit, written down rather than pretended away.
+    </p>
+    <p class="scaled" id="scaled">
+      This paragraph is sized in rem, so the same tool does reach it.
+    </p>
+    <p>Scroll down; there is 4000px of page below here.</p>
+  </div>
+
+  <div id="onetrust-banner-sdk">
+    We use cookies. This banner also locks scrolling, which is the point.
+  </div>
+</body>
+</html>

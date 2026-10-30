@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --ink: #0a1b2e; --text: #283549; --mute: #5b6b80;
+        --surface: #ffffff; --surface-2: #f6f7f9; --surface-3: #eef1f5;
+        --hairline: rgba(15, 23, 42, 0.1); --hairline-strong: rgba(15, 23, 42, 0.16);
+        --accent: #1e40af; --on-accent: #fff;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      /* Half of the feed section is shown and hidden through the `hidden`
+         attribute, and a flex or grid rule from a class beats the user agent's
+         [hidden] display:none. Without this line "hidden" would be advisory. */
+      [hidden] { display: none !important; }
+      body {
+        width: 320px; font: 14px/1.5 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: var(--text); background: var(--surface); -webkit-font-smoothing: antialiased;
+      }
+      .head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px; border-bottom: 1px solid var(--hairline); }
+      .mark { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; overflow: hidden; }
+      .title { font-weight: 650; font-size: 14px; color: var(--ink); margin: 0; }
+      .sub { font-size: 11.5px; color: var(--mute); }
+      .body { padding: 14px 16px 16px; }
+      .cta {
+        width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+        height: 42px; border: 0; border-radius: 10px; background: var(--accent); color: var(--on-accent);
+        font: 600 13px/1 'Inter', sans-serif; cursor: pointer; transition: background .15s;
+      }
+      .cta:hover { background: #16357f; }
+      .cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); margin: 16px 0 8px; }
+      .profiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .profile {
+        text-align: left; padding: 9px 10px; border-radius: 9px; background: var(--surface-2);
+        border: 1px solid var(--hairline); cursor: pointer; transition: border-color .15s, background .15s;
+      }
+      .profile:hover { border-color: var(--hairline-strong); }
+      .profile[aria-pressed='true'] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+      .profile-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+      .profile-desc { font-size: 10.5px; color: var(--mute); line-height: 1.3; margin-top: 1px; }
+      .foot { display: flex; gap: 8px; margin-top: 14px; }
+      .ghost {
+        flex: 1; height: 34px; border-radius: 8px; border: 1px solid var(--hairline-strong);
+        background: var(--surface); color: var(--text); font: 600 12px/1 'Inter', sans-serif; cursor: pointer;
+      }
+      .ghost:hover { border-color: var(--accent); color: var(--ink); }
+      .ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .status { font-size: 11px; color: var(--mute); margin-top: 12px; text-align: center; }
+
+      /* Feed guard. Every colour below is one of the custom properties declared
+         at the top of this file, so the dark-mode block at the bottom already
+         covers this whole section and cannot fall behind it. */
+      .scopes { display: flex; gap: 4px; }
+      .scope {
+        flex: 1; min-width: 0; height: 26px; padding: 0 2px; border-radius: 7px;
+        background: var(--surface-2); border: 1px solid var(--hairline); color: var(--mute);
+        font: 600 10.5px/1 'Inter', sans-serif; cursor: pointer; transition: border-color .15s, background .15s, color .15s;
+      }
+      .scope:hover { border-color: var(--hairline-strong); }
+      .scope[aria-pressed='true'] { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+      .scope:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .override { display: flex; align-items: baseline; gap: 6px; font-size: 10.5px; color: var(--mute); margin: 8px 0 0; }
+      .link {
+        border: 0; padding: 0; background: none; color: var(--accent); cursor: pointer;
+        font: 600 10.5px/1.3 'Inter', sans-serif; text-decoration: underline;
+      }
+      .link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+      .stat { padding: 9px 10px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--hairline); }
+      .stat-value { font-size: 17px; font-weight: 650; color: var(--ink); line-height: 1.2; }
+      .stat-label { font-size: 11.5px; font-weight: 600; color: var(--text); margin-top: 2px; }
+      .stat-note { font-size: 10px; color: var(--mute); line-height: 1.3; }
+      .score { font-size: 11px; color: var(--mute); margin: 8px 0 0; }
+      .rows { display: grid; gap: 6px; }
+      .row {
+        display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+        padding: 8px 10px; border-radius: 9px; background: var(--surface-2);
+        border: 1px solid var(--hairline); cursor: pointer; transition: border-color .15s, background .15s;
+      }
+      .row:hover { border-color: var(--hairline-strong); }
+      .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .row[aria-checked='true'] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+      .row-text { flex: 1; min-width: 0; }
+      .row-name { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); }
+      .row-desc { display: block; font-size: 10.5px; color: var(--mute); line-height: 1.3; margin-top: 1px; }
+      /* The thumb slides, so the state is carried by position as well as by
+         colour, and aria-checked carries it for anyone not looking at either. */
+      .track {
+        flex: none; position: relative; width: 30px; height: 18px; border-radius: 9px;
+        background: var(--surface-3); border: 1px solid var(--hairline-strong); transition: background .15s, border-color .15s;
+      }
+      .track::after {
+        content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px;
+        border-radius: 50%; background: var(--mute); transition: transform .15s, background .15s;
+      }
+      .row[aria-checked='true'] .track { background: var(--accent); border-color: var(--accent); }
+      .row[aria-checked='true'] .track::after { transform: translateX(12px); background: var(--on-accent); }
+      .card { padding: 10px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--hairline); }
+      .field { display: flex; align-items: center; gap: 8px; }
+      .field-label { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; color: var(--ink); }
+      .picker {
+        height: 28px; border-radius: 7px; border: 1px solid var(--hairline-strong); background: var(--surface);
+        color: var(--text); font: 600 12px/1 'Inter', sans-serif; padding: 0 4px; cursor: pointer;
+      }
+      .picker:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .mini {
+        height: 28px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--hairline-strong);
+        background: var(--surface); color: var(--text); font: 600 12px/1 'Inter', sans-serif; cursor: pointer;
+      }
+      .mini:hover { border-color: var(--accent); color: var(--ink); }
+      .mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      .mini.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+      .meta { font-size: 10.5px; color: var(--mute); margin: 8px 0 0; }
+      .bar { height: 6px; margin-top: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+      .bar-fill { height: 100%; width: 0%; border-radius: 3px; background: var(--accent); }
+
+      /* When the tools are off on this site, the profile buttons and Open menu
+         do nothing, so they are removed rather than left there to be pressed.
+         #feed joins them for the same reason: a filter that cannot run on this
+         site should not be a switch the user can flip. */
+      body[data-off='true'] #open, body[data-off='true'] .eyebrow,
+      body[data-off='true'] #profiles, body[data-off='true'] #reset,
+      body[data-off='true'] #feed { display: none; }
+      body[data-off='true'] #power { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+      .note { font-size: 11.5px; color: var(--text); line-height: 1.45; margin: 0 0 12px; display: none; }
+      body[data-off='true'] .note { display: block; }
+      @media (prefers-color-scheme: dark) {
+        :root { --ink: #f3f7fc; --text: #d9e2ee; --mute: #94a3b8; --surface: #0f1722; --surface-2: #16202e; --surface-3: #1f2a3a; --hairline: rgba(255,255,255,.1); --hairline-strong: rgba(255,255,255,.18); --accent: #5b8cff; --on-accent: #0a1b2e; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <span class="mark" aria-hidden="true">
+        <img src="icons/icon48.png" alt="" width="30" height="30" style="display:block">
+      </span>
+      <div>
+        <h1 class="title">WebAble</h1>
+        <div class="sub">Adaptive accessibility tools</div>
+      </div>
+    </div>
+    <div class="body">
+      <p class="note">
+        WebAble is off on this site. The page is exactly as the site made it, and
+        your settings for it are still saved.
+      </p>
+      <button class="cta" id="open">Open accessibility menu</button>
+      <div class="eyebrow">One-click profiles</div>
+      <div class="profiles" id="profiles"></div>
+
+      <!--
+        The feed guard, as the quick surface only. Everything here is a switch
+        somebody wants to hit in two seconds without leaving the page they are
+        on; the categories, the block lists, the custom topics and the log live
+        in the in-page panel, which "All feed controls" opens.
+
+        Hidden until the store has loaded, because a stat card that shows 0 and
+        then jumps to the real number reads as a bug rather than as loading.
+      -->
+      <div id="feed" hidden>
+        <div class="eyebrow">Feed guard</div>
+        <div class="scopes" id="feed-scopes" role="group" aria-label="Which feed these rules apply to"></div>
+        <p class="override" id="feed-override" hidden>
+          <span>Overriding just for this platform.</span>
+          <button type="button" class="link" id="feed-clear-override">Reset to Global</button>
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value" id="feed-filtered">0</div>
+            <div class="stat-label">Filtered</div>
+            <div class="stat-note">items this week</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="feed-saved">0s</div>
+            <div class="stat-label">Time saved</div>
+            <!-- "estimate" is not a hedge, it is the truth: the figure is a
+                 count multiplied by an assumed 30 seconds. See
+                 SECONDS_PER_HIDDEN_ITEM in packages/core/src/feeds/score.ts. -->
+            <div class="stat-note">estimate, 30s per item</div>
+          </div>
+        </div>
+        <p class="score" id="feed-score"></p>
+
+        <div class="eyebrow">Quick filters</div>
+        <div class="rows" id="feed-rules"></div>
+
+        <div class="eyebrow" id="feed-limit-eyebrow">Daily limit</div>
+        <div class="card" id="feed-limit">
+          <div class="field">
+            <label class="field-label" for="feed-limit-minutes">Minutes a day</label>
+            <select class="picker" id="feed-limit-minutes"></select>
+          </div>
+          <p class="meta" id="feed-limit-meta" hidden>
+            <span id="feed-limit-left"></span>
+            <span id="feed-limit-used"></span>
+          </p>
+          <div
+            class="bar"
+            id="feed-limit-bar"
+            role="progressbar"
+            aria-label="Daily limit used"
+            aria-valuemin="0"
+            aria-valuemax="0"
+            aria-valuenow="0"
+            hidden
+          >
+            <div class="bar-fill" id="feed-limit-fill"></div>
+          </div>
+        </div>
+
+        <div class="eyebrow">Focus session</div>
+        <div class="card">
+          <div class="field" id="feed-session-idle">
+            <label class="field-label" for="feed-session-minutes">Length</label>
+            <select class="picker" id="feed-session-minutes"></select>
+            <button type="button" class="mini primary" id="feed-session-start">Start</button>
+          </div>
+          <div class="field" id="feed-session-live" hidden>
+            <span class="field-label" id="feed-session-left"></span>
+            <button type="button" class="mini" id="feed-session-stop">Stop</button>
+          </div>
+        </div>
+
+        <div class="foot">
+          <button class="ghost" id="feed-all">All feed controls</button>
+        </div>
+      </div>
+
+      <div class="foot">
+        <button class="ghost" id="reset">Reset this site</button>
+        <button class="ghost" id="settings">Settings</button>
+      </div>
+      <div class="foot">
+        <button class="ghost" id="power">Turn off on this site</button>
+      </div>
+      <div class="status" role="status" aria-live="polite" id="status">On this page</div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

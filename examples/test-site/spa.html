@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SPA routing · WebAble test</title>
+    <script src="/widget.js" async></script>
+    <style>body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 40px; max-width: 60ch; }
+      button { font: inherit; padding: 8px 14px; margin-right: 8px; }</style>
+  </head>
+  <body>
+    <h1>Client-side routing</h1>
+    <p>
+      Each button replaces the article the way a single-page app does: a real
+      pushState, and a full re-render of the content, including a wipe of
+      anything the page did not put there itself. That second part is what a
+      framework rewriting the DOM looks like, and it is what used to leave the
+      widget's effects behind on the old route.
+    </p>
+    <button id="a">Go to /article-a</button>
+    <button id="b">Go to /article-b</button>
+    <button id="hash">Change the hash</button>
+
+    <main id="view"><h2>Article A</h2><p>First route.</p><img src="/brand/webable-mark-light.png" alt="" width="40"></main>
+
+    <script>
+      let n = 0;
+      function go(path) {
+        history.pushState({}, '', path);
+        // Re-render, and blow away injected styles the way an aggressive
+        // framework would.
+        n++;
+        document.getElementById('view').innerHTML =
+          '<h2>Article ' + n + '</h2><p>Route ' + path + '</p><img src="/brand/webable-mark-light.png" alt="" width="40">';
+        document.querySelectorAll('style[data-webable="feature"]').forEach(function (s) { s.remove(); });
+      }
+      document.getElementById('a').onclick = function () { go('/article-a'); };
+      document.getElementById('b').onclick = function () { go('/article-b'); };
+      document.getElementById('hash').onclick = function () { location.hash = 'section-' + (++n); };
+    </script>
+  </body>
+</html>

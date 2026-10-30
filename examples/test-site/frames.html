@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WebAble fixture: frames</title>
+<style>
+  body { font: 16px/1.6 -apple-system, system-ui, sans-serif; margin: 0; padding: 24px; background: #fff; color: #111; }
+  iframe { display: block; width: 320px; height: 180px; border: 1px solid #ccc; margin: 16px 0; }
+</style>
+</head>
+<body>
+  <h1>A page with frames</h1>
+  <p>
+    The parent cannot see what a frame holds, so it cannot decide whether the
+    thing inside is a video (leave its colours alone) or a comment thread (dim
+    it with the page). The extension puts the content script in the frame and
+    lets the frame decide for itself. This fixture is what proves it.
+  </p>
+
+  <!-- The media the re-invert rule was written for, so a check can tell
+       "iframe left the set" apart from "the rule was deleted". -->
+  <img id="pic" width="40" height="40" alt="A red square"
+       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR42mP8z8BQz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC">
+
+  <!-- Same origin as this page. -->
+  <iframe id="same" title="Same-origin frame" src="framed-child.html"></iframe>
+
+  <!--
+    Cross origin. The test server answers on 127.0.0.1; localhost is the same
+    server on a different origin, which is exactly the shape of a real embed and
+    is also a DIFFERENT site key. A frame that keyed off its own origin would
+    read localhost's settings here instead of this page's.
+  -->
+  <iframe id="cross" title="Cross-origin frame"></iframe>
+
+  <script>
+    var cross = document.getElementById('cross');
+    cross.src = location.href
+      .replace('127.0.0.1', 'localhost')
+      .replace(/[^/]*$/, 'framed-child.html');
+  </script>
+</body>
+</html>
