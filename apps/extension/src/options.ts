@@ -358,3 +358,34 @@ $('import').addEventListener('click', () => ($('import-file') as HTMLInputElemen
     'ok',
   );
 });
+
+// ---- keyboard and power tools ----
+// Same key and shape as apps/extension/src/power.ts reads. Synced, because how
+// somebody clicks is about them, not about this machine.
+const POWER_KEY = 'webable:power';
+const hintMode = $('hint-mode') as HTMLSelectElement;
+const pageKeys = $('page-keys') as HTMLInputElement;
+function savePower(): void {
+  const prefs = { hintMode: hintMode.value === 'numbers' ? 'numbers' : 'letters', pageShortcuts: pageKeys.checked };
+  chrome.storage.sync.set({ [POWER_KEY]: prefs }, () => setStatus($('power-status'), 'Saved. Open pages pick it up straight away.', 'ok'));
+}
+try {
+  chrome.storage.sync.get(POWER_KEY, (res: Record<string, { hintMode?: string; pageShortcuts?: boolean }>) => {
+    const p = res?.[POWER_KEY] || {};
+    hintMode.value = p.hintMode === 'numbers' ? 'numbers' : 'letters';
+    pageKeys.checked = p.pageShortcuts !== false;
+  });
+  chrome.commands.getAll((cmds: Array<{ name?: string; shortcut?: string }>) => {
+    const k = (n: string) => cmds.find((c) => c.name === n)?.shortcut || 'not set';
+    $('k-bar').textContent = k('command-bar');
+    $('k-hints').textContent = k('click-hints');
+  });
+} catch {
+  /* opened outside the extension */
+}
+hintMode.addEventListener('change', savePower);
+pageKeys.addEventListener('change', savePower);
+$('shortcuts').addEventListener('click', () => {
+  // chrome:// pages cannot be linked to from a page, only opened through the tabs API.
+  chrome.tabs.create({ url: /Edg\//.test(navigator.userAgent) ? 'edge://extensions/shortcuts' : 'chrome://extensions/shortcuts' });
+});

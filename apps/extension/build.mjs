@@ -39,6 +39,7 @@ const entries = {
   popup: 'src/popup.ts',
   options: 'src/options.ts',
   report: 'src/report.tsx',
+  welcome: 'src/welcome.ts',
 };
 const configs = Object.entries(entries).map(([name, src]) => ({
   ...shared,
@@ -48,7 +49,7 @@ const configs = Object.entries(entries).map(([name, src]) => ({
 
 function copyAssets() {
   copyFileSync(join(here, 'manifest.json'), join(dist, 'manifest.json'));
-  for (const html of ['popup.html', 'options.html', 'report.html']) copyFileSync(join(here, 'src', html), join(dist, html));
+  for (const html of ['popup.html', 'options.html', 'report.html', 'welcome.html']) copyFileSync(join(here, 'src', html), join(dist, html));
   const icons = join(here, 'icons');
   if (existsSync(icons)) cpSync(icons, join(dist, 'icons'), { recursive: true });
   const font = join(root, 'assets/fonts/OpenDyslexic-Regular.woff2');

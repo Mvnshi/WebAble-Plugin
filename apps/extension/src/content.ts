@@ -511,6 +511,13 @@ function watchMessages(): void {
           sendResponse({
             activeProfile: live ? live.engine.getState().activeProfile : null,
             count: live ? live.engine.activeCount() : 0,
+            // Which tools are on, so the popup's switches show the truth
+            // rather than a guess. Ids only: settings values stay here.
+            active: live
+              ? Object.entries(live.engine.getState().settings)
+                  .filter(([, s]) => s.active)
+                  .map(([id]) => id)
+              : [],
             host: SITE,
             enabled: !!live,
           });

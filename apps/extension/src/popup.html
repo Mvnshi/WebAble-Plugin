@@ -2,241 +2,287 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <title>WebAble</title>
     <style>
       :root {
-        --ink: #0a1b2e; --text: #283549; --mute: #5b6b80;
-        --surface: #ffffff; --surface-2: #f6f7f9; --surface-3: #eef1f5;
-        --hairline: rgba(15, 23, 42, 0.1); --hairline-strong: rgba(15, 23, 42, 0.16);
-        --accent: #1e40af; --on-accent: #fff;
+        --bg: #ffffff; --bg-2: #f4f6fb; --bg-3: #eaeef6; --ink: #0a1324; --text: #2a364b; --mute: #66748a;
+        --line: rgba(10, 19, 36, 0.09); --line-2: rgba(10, 19, 36, 0.16);
+        --accent: #1e40af; --accent-2: #2f80ff; --accent-soft: rgba(47, 128, 255, 0.10);
+        --on: #0f8a5f; --on-soft: rgba(15, 138, 95, 0.12); --warn: #b45309;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1420; --bg-2: #141d2c; --bg-3: #1b2639; --ink: #f2f6fc; --text: #d0dae8; --mute: #8f9db3;
+          --line: rgba(255, 255, 255, 0.08); --line-2: rgba(255, 255, 255, 0.16);
+          --accent: #8fb4ff; --accent-2: #5b9bff; --accent-soft: rgba(91, 155, 255, 0.16);
+          --on: #43d19e; --on-soft: rgba(67, 209, 158, 0.14); --warn: #f5b54a;
+          color-scheme: dark;
+        }
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; }
-      /* Half of the feed section is shown and hidden through the `hidden`
-         attribute, and a flex or grid rule from a class beats the user agent's
-         [hidden] display:none. Without this line "hidden" would be advisory. */
+      body { width: 380px; background: var(--bg); color: var(--text); font: 13.5px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+      button, input, select { font: inherit; color: inherit; }
+      button { cursor: pointer; }
+      :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
       [hidden] { display: none !important; }
-      body {
-        width: 320px; font: 14px/1.5 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: var(--text); background: var(--surface); -webkit-font-smoothing: antialiased;
-      }
-      .head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px; border-bottom: 1px solid var(--hairline); }
-      .mark { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; overflow: hidden; }
-      .title { font-weight: 650; font-size: 14px; color: var(--ink); margin: 0; }
-      .sub { font-size: 11.5px; color: var(--mute); }
-      .body { padding: 14px 16px 16px; }
-      .cta {
-        width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
-        height: 42px; border: 0; border-radius: 10px; background: var(--accent); color: var(--on-accent);
-        font: 600 13px/1 'Inter', sans-serif; cursor: pointer; transition: background .15s;
-      }
-      .cta:hover { background: #16357f; }
-      .cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-      .eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); margin: 16px 0 8px; }
-      .profiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      .profile {
-        text-align: left; padding: 9px 10px; border-radius: 9px; background: var(--surface-2);
-        border: 1px solid var(--hairline); cursor: pointer; transition: border-color .15s, background .15s;
-      }
-      .profile:hover { border-color: var(--hairline-strong); }
-      .profile[aria-pressed='true'] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-      .profile-name { font-size: 12.5px; font-weight: 600; color: var(--ink); }
-      .profile-desc { font-size: 10.5px; color: var(--mute); line-height: 1.3; margin-top: 1px; }
-      .foot { display: flex; gap: 8px; margin-top: 14px; }
-      .ghost {
-        flex: 1; height: 34px; border-radius: 8px; border: 1px solid var(--hairline-strong);
-        background: var(--surface); color: var(--text); font: 600 12px/1 'Inter', sans-serif; cursor: pointer;
-      }
-      .ghost:hover { border-color: var(--accent); color: var(--ink); }
-      .ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-      .status { font-size: 11px; color: var(--mute); margin-top: 12px; text-align: center; }
+      .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-      /* Feed guard. Every colour below is one of the custom properties declared
-         at the top of this file, so the dark-mode block at the bottom already
-         covers this whole section and cannot fall behind it. */
-      .scopes { display: flex; gap: 4px; }
-      .scope {
-        flex: 1; min-width: 0; height: 26px; padding: 0 2px; border-radius: 7px;
-        background: var(--surface-2); border: 1px solid var(--hairline); color: var(--mute);
-        font: 600 10.5px/1 'Inter', sans-serif; cursor: pointer; transition: border-color .15s, background .15s, color .15s;
-      }
-      .scope:hover { border-color: var(--hairline-strong); }
-      .scope[aria-pressed='true'] { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-      .scope:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-      .override { display: flex; align-items: baseline; gap: 6px; font-size: 10.5px; color: var(--mute); margin: 8px 0 0; }
-      .link {
-        border: 0; padding: 0; background: none; color: var(--accent); cursor: pointer;
-        font: 600 10.5px/1.3 'Inter', sans-serif; text-decoration: underline;
-      }
-      .link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-      .stat { padding: 9px 10px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--hairline); }
-      .stat-value { font-size: 17px; font-weight: 650; color: var(--ink); line-height: 1.2; }
-      .stat-label { font-size: 11.5px; font-weight: 600; color: var(--text); margin-top: 2px; }
-      .stat-note { font-size: 10px; color: var(--mute); line-height: 1.3; }
-      .score { font-size: 11px; color: var(--mute); margin: 8px 0 0; }
-      .rows { display: grid; gap: 6px; }
-      .row {
-        display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-        padding: 8px 10px; border-radius: 9px; background: var(--surface-2);
-        border: 1px solid var(--hairline); cursor: pointer; transition: border-color .15s, background .15s;
-      }
-      .row:hover { border-color: var(--hairline-strong); }
-      .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-      .row[aria-checked='true'] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-      .row-text { flex: 1; min-width: 0; }
-      .row-name { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); }
-      .row-desc { display: block; font-size: 10.5px; color: var(--mute); line-height: 1.3; margin-top: 1px; }
-      /* The thumb slides, so the state is carried by position as well as by
-         colour, and aria-checked carries it for anyone not looking at either. */
-      .track {
-        flex: none; position: relative; width: 30px; height: 18px; border-radius: 9px;
-        background: var(--surface-3); border: 1px solid var(--hairline-strong); transition: background .15s, border-color .15s;
-      }
-      .track::after {
-        content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px;
-        border-radius: 50%; background: var(--mute); transition: transform .15s, background .15s;
-      }
-      .row[aria-checked='true'] .track { background: var(--accent); border-color: var(--accent); }
-      .row[aria-checked='true'] .track::after { transform: translateX(12px); background: var(--on-accent); }
-      .card { padding: 10px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--hairline); }
+      .head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; }
+      .head img { width: 32px; height: 32px; border-radius: 9px; display: block; }
+      .head-text { flex: 1; min-width: 0; }
+      .title { margin: 0; font-size: 15px; font-weight: 750; color: var(--ink); letter-spacing: -0.01em; }
+      .site { font-size: 12px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .site b { color: var(--text); font-weight: 600; }
+
+      .power { display: inline-flex; align-items: center; gap: 8px; padding: 5px 6px 5px 10px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--bg-2); font-size: 12px; font-weight: 650; color: var(--text); }
+      .power .knob { width: 30px; height: 18px; border-radius: 999px; background: var(--on); position: relative; transition: background .15s; }
+      .power .knob::after { content: ''; position: absolute; top: 2px; left: 14px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+      .power[aria-checked='false'] .knob { background: var(--line-2); }
+      .power[aria-checked='false'] .knob::after { left: 2px; }
+
+      .search { position: relative; margin: 2px 14px 10px; }
+      .search input { width: 100%; height: 42px; padding: 0 92px 0 38px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--bg-2); outline: none; font-size: 14px; color: var(--ink); }
+      .search input:focus { border-color: var(--accent-2); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--bg); }
+      .search svg { position: absolute; left: 12px; top: 12px; color: var(--mute); }
+      .search kbd { position: absolute; right: 8px; top: 10px; font: 600 10.5px ui-monospace, Menlo, monospace; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--line-2); color: var(--mute); background: var(--bg); }
+
+      .results { list-style: none; margin: 0 8px 8px; padding: 0; max-height: 380px; overflow: auto; }
+      .result { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; }
+      .result[aria-selected='true'] { background: var(--accent-soft); }
+      .result-title { flex: 1; min-width: 0; color: var(--ink); font-weight: 550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .result-group { font-size: 11px; color: var(--mute); }
+      .result-on { font-size: 11px; color: var(--on); font-weight: 700; }
+      .results-empty { padding: 10px 14px; color: var(--mute); }
+
+      .wrap { padding: 0 14px 12px; }
+      .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 4px; }
+      .action { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 11px 4px 9px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); font-size: 11.5px; font-weight: 600; color: var(--text); text-align: center; line-height: 1.2; }
+      .action:hover { border-color: var(--accent-2); color: var(--ink); }
+      .action svg { color: var(--accent); }
+      .action.is-primary { background: linear-gradient(140deg, #2f80ff, #1e40af); color: #fff; border-color: transparent; }
+      .action.is-primary svg { color: #fff; }
+
+      .eyebrow { margin: 16px 2px 8px; font-size: 10.5px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; color: var(--mute); display: flex; justify-content: space-between; align-items: center; }
+      .eyebrow .link { text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+      .suggest { display: grid; gap: 8px; }
+      .tip { display: flex; gap: 10px; align-items: center; padding: 10px 10px 10px 12px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); }
+      .tip-text { flex: 1; min-width: 0; }
+      .tip-title { font-weight: 650; color: var(--ink); font-size: 13px; }
+      .tip-why { font-size: 12px; color: var(--mute); }
+      .tip button { flex: none; padding: 7px 10px; border-radius: 9px; border: 0; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; }
+      @media (prefers-color-scheme: dark) { .tip button { color: #0a1324; } }
+      .tip.is-done button { background: var(--on-soft); color: var(--on); }
+
+      .tools { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .tool { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); text-align: left; font-weight: 600; font-size: 12.5px; color: var(--text); }
+      .tool:hover { border-color: var(--line-2); }
+      .tool .led { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); flex: none; }
+      .tool[aria-pressed='true'] { border-color: var(--on); background: var(--on-soft); color: var(--ink); }
+      .tool[aria-pressed='true'] .led { background: var(--on); box-shadow: 0 0 0 3px var(--on-soft); }
+
+      .profiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .profile { text-align: left; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-2); }
+      .profile:hover { border-color: var(--accent-2); }
+      .profile[aria-pressed='true'] { border-color: var(--accent-2); box-shadow: 0 0 0 2px var(--accent-soft); }
+      .profile-name { font-weight: 650; color: var(--ink); font-size: 12.5px; }
+      .profile-desc { font-size: 11px; color: var(--mute); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+      details.feed { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); }
+      details.feed > summary { list-style: none; cursor: pointer; padding: 11px 12px; font-weight: 650; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+      details.feed > summary::-webkit-details-marker { display: none; }
+      details.feed > summary::after { content: ''; margin-left: auto; width: 8px; height: 8px; border-right: 2px solid var(--mute); border-bottom: 2px solid var(--mute); transform: rotate(45deg); transition: transform .15s; }
+      details.feed[open] > summary::after { transform: rotate(-135deg); }
+      .feed-body { padding: 0 12px 12px; }
+      .feed-body .eyebrow { margin-top: 12px; }
+      .scopes { display: flex; gap: 4px; flex-wrap: wrap; }
+      .scope { padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--bg); font-size: 12px; font-weight: 600; }
+      .scope[aria-pressed='true'] { background: var(--accent); color: #fff; border-color: transparent; }
+      @media (prefers-color-scheme: dark) { .scope[aria-pressed='true'] { color: #0a1324; } }
+      .override { font-size: 12px; color: var(--mute); display: flex; gap: 8px; align-items: center; margin: 8px 0 0; }
+      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+      .stat { padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
+      .stat-value { font-size: 18px; font-weight: 750; color: var(--ink); }
+      .stat-label { font-weight: 650; font-size: 12px; }
+      .stat-note { font-size: 11px; color: var(--mute); }
+      .score { font-size: 12px; color: var(--mute); margin: 6px 0 0; }
+      .rows { display: grid; gap: 4px; }
+      .row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); text-align: left; }
+      .row-text { flex: 1; display: flex; flex-direction: column; }
+      .row-name { font-weight: 600; color: var(--ink); font-size: 12.5px; }
+      .row-desc { font-size: 11px; color: var(--mute); }
+      .track { width: 30px; height: 18px; border-radius: 999px; background: var(--line-2); position: relative; flex: none; }
+      .track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: left .15s; }
+      .row[aria-checked='true'] .track { background: var(--on); }
+      .row[aria-checked='true'] .track::after { left: 14px; }
+      .card { padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
       .field { display: flex; align-items: center; gap: 8px; }
-      .field-label { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; color: var(--ink); }
-      .picker {
-        height: 28px; border-radius: 7px; border: 1px solid var(--hairline-strong); background: var(--surface);
-        color: var(--text); font: 600 12px/1 'Inter', sans-serif; padding: 0 4px; cursor: pointer;
-      }
-      .picker:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-      .mini {
-        height: 28px; padding: 0 12px; border-radius: 7px; border: 1px solid var(--hairline-strong);
-        background: var(--surface); color: var(--text); font: 600 12px/1 'Inter', sans-serif; cursor: pointer;
-      }
-      .mini:hover { border-color: var(--accent); color: var(--ink); }
-      .mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-      .mini.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-      .meta { font-size: 10.5px; color: var(--mute); margin: 8px 0 0; }
-      .bar { height: 6px; margin-top: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
-      .bar-fill { height: 100%; width: 0%; border-radius: 3px; background: var(--accent); }
+      .field-label { flex: 1; font-weight: 600; font-size: 12.5px; }
+      .picker { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg-2); }
+      .meta { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--mute); margin: 8px 0 4px; }
+      .bar { height: 6px; border-radius: 999px; background: var(--bg-3); overflow: hidden; }
+      .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); }
+      .mini { padding: 5px 10px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg-2); font-weight: 650; font-size: 12px; }
+      .mini.primary { background: var(--accent); color: #fff; border-color: transparent; }
+      @media (prefers-color-scheme: dark) { .mini.primary { color: #0a1324; } }
 
-      /* When the tools are off on this site, the profile buttons and Open menu
-         do nothing, so they are removed rather than left there to be pressed.
-         #feed joins them for the same reason: a filter that cannot run on this
-         site should not be a switch the user can flip. */
-      body[data-off='true'] #open, body[data-off='true'] .eyebrow,
-      body[data-off='true'] #profiles, body[data-off='true'] #reset,
-      body[data-off='true'] #feed { display: none; }
-      body[data-off='true'] #power { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-      .note { font-size: 11.5px; color: var(--text); line-height: 1.45; margin: 0 0 12px; display: none; }
-      body[data-off='true'] .note { display: block; }
-      @media (prefers-color-scheme: dark) {
-        :root { --ink: #f3f7fc; --text: #d9e2ee; --mute: #94a3b8; --surface: #0f1722; --surface-2: #16202e; --surface-3: #1f2a3a; --hairline: rgba(255,255,255,.1); --hairline-strong: rgba(255,255,255,.18); --accent: #5b8cff; --on-accent: #0a1b2e; }
-      }
+      .link { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 650; font-size: 12px; text-decoration: underline; text-underline-offset: 2px; }
+      .foot { display: flex; gap: 6px; margin-top: 14px; }
+      .ghost { flex: 1; padding: 9px 8px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--bg); font-weight: 650; font-size: 12.5px; color: var(--ink); }
+      .ghost:hover { border-color: var(--accent-2); }
+      .status { margin: 10px 0 0; text-align: center; font-size: 12px; color: var(--mute); }
+
+      .off-note { margin: 0 14px 12px; padding: 12px; border-radius: 12px; background: var(--bg-2); border: 1px dashed var(--line-2); color: var(--text); font-size: 12.5px; }
+      body[data-off='true'] .when-on { display: none !important; }
+      body:not([data-off='true']) .off-note { display: none; }
+      body[data-blank='true'] .when-page { display: none !important; }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
     </style>
   </head>
   <body>
-    <div class="head">
-      <span class="mark" aria-hidden="true">
-        <img src="icons/icon48.png" alt="" width="30" height="30" style="display:block">
-      </span>
-      <div>
+    <header class="head">
+      <img src="icons/icon48.png" alt="" width="32" height="32" />
+      <div class="head-text">
         <h1 class="title">WebAble</h1>
-        <div class="sub">Adaptive accessibility tools</div>
+        <div class="site" id="site">Adapts the web to you</div>
       </div>
+      <button type="button" class="power when-page" id="power" role="switch" aria-checked="true" aria-label="WebAble on this site">
+        <span id="power-label">On</span><span class="knob" aria-hidden="true"></span>
+      </button>
+    </header>
+
+    <p class="off-note">
+      WebAble is off on this site. The page is exactly as the site made it, and your settings for it are still saved. Switch it back on above.
+    </p>
+
+    <div class="search when-on when-page">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+      <input
+        id="q"
+        type="text"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="results"
+        aria-autocomplete="list"
+        aria-label="Type what you need"
+        placeholder="Type what you need..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd id="bar-key" title="Opens the command bar on the page">Ctrl+Shift+K</kbd>
     </div>
-    <div class="body">
-      <p class="note">
-        WebAble is off on this site. The page is exactly as the site made it, and
-        your settings for it are still saved.
-      </p>
-      <button class="cta" id="open">Open accessibility menu</button>
-      <div class="eyebrow">One-click profiles</div>
-      <div class="profiles" id="profiles"></div>
+    <ul class="results" id="results" role="listbox" aria-label="Results" hidden></ul>
+
+    <div class="wrap" id="home">
+      <div class="actions when-on when-page">
+        <button type="button" class="action is-primary" id="act-bar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M7 10l3 2-3 2M12 14h5" /></svg>
+          Command bar
+        </button>
+        <button type="button" class="action" id="act-hints">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M8 3l11 8-5 1.4L16.6 18l-2.4 1.1-2.6-5.6L8 17z" /></svg>
+          Click by keyboard
+        </button>
+        <button type="button" class="action" id="act-read">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" /><path d="M16.5 8.5a5 5 0 0 1 0 7" /></svg>
+          Read aloud
+        </button>
+        <button type="button" class="action" id="act-check">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 16a8 8 0 1 1 16 0" /><path d="M12 16l4-5" /></svg>
+          Check this site
+        </button>
+      </div>
+
+      <div id="suggest-wrap" class="when-on when-page" hidden>
+        <div class="eyebrow">For this page</div>
+        <div class="suggest" id="suggest"></div>
+      </div>
+
+      <div class="when-on when-page">
+        <div class="eyebrow">Quick tools <button type="button" class="link" id="open">All tools</button></div>
+        <div class="tools" id="tools"></div>
+      </div>
+
+      <div class="when-on">
+        <div class="eyebrow">One-click profiles</div>
+        <div class="profiles" id="profiles"></div>
+      </div>
 
       <!--
-        The feed guard, as the quick surface only. Everything here is a switch
-        somebody wants to hit in two seconds without leaving the page they are
-        on; the categories, the block lists, the custom topics and the log live
-        in the in-page panel, which "All feed controls" opens.
-
-        Hidden until the store has loaded, because a stat card that shows 0 and
-        then jumps to the real number reads as a bug rather than as loading.
+        The feed guard, as the quick surface only. Folded away unless the tab is
+        on one of the four feed sites, because on any other page it is the
+        least relevant thing here; the rules are cross-site, so it stays one
+        click away everywhere. Hidden until the store has loaded, because a stat
+        card that shows 0 and then jumps to the real number reads as a bug.
       -->
-      <div id="feed" hidden>
-        <div class="eyebrow">Feed guard</div>
-        <div class="scopes" id="feed-scopes" role="group" aria-label="Which feed these rules apply to"></div>
-        <p class="override" id="feed-override" hidden>
-          <span>Overriding just for this platform.</span>
-          <button type="button" class="link" id="feed-clear-override">Reset to Global</button>
-        </p>
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-value" id="feed-filtered">0</div>
-            <div class="stat-label">Filtered</div>
-            <div class="stat-note">items this week</div>
-          </div>
-          <div class="stat">
-            <div class="stat-value" id="feed-saved">0s</div>
-            <div class="stat-label">Time saved</div>
-            <!-- "estimate" is not a hedge, it is the truth: the figure is a
-                 count multiplied by an assumed 30 seconds. See
-                 SECONDS_PER_HIDDEN_ITEM in packages/core/src/feeds/score.ts. -->
-            <div class="stat-note">estimate, 30s per item</div>
-          </div>
-        </div>
-        <p class="score" id="feed-score"></p>
-
-        <div class="eyebrow">Quick filters</div>
-        <div class="rows" id="feed-rules"></div>
-
-        <div class="eyebrow" id="feed-limit-eyebrow">Daily limit</div>
-        <div class="card" id="feed-limit">
-          <div class="field">
-            <label class="field-label" for="feed-limit-minutes">Minutes a day</label>
-            <select class="picker" id="feed-limit-minutes"></select>
-          </div>
-          <p class="meta" id="feed-limit-meta" hidden>
-            <span id="feed-limit-left"></span>
-            <span id="feed-limit-used"></span>
+      <details class="feed when-on" id="feed" hidden>
+        <summary>Feed guard <span class="site">YouTube, TikTok, Instagram, X</span></summary>
+        <div class="feed-body">
+          <div class="scopes" id="feed-scopes" role="group" aria-label="Which feed these rules apply to"></div>
+          <p class="override" id="feed-override" hidden>
+            <span>Overriding just for this platform.</span>
+            <button type="button" class="link" id="feed-clear-override">Reset to Global</button>
           </p>
-          <div
-            class="bar"
-            id="feed-limit-bar"
-            role="progressbar"
-            aria-label="Daily limit used"
-            aria-valuemin="0"
-            aria-valuemax="0"
-            aria-valuenow="0"
-            hidden
-          >
-            <div class="bar-fill" id="feed-limit-fill"></div>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value" id="feed-filtered">0</div>
+              <div class="stat-label">Filtered</div>
+              <div class="stat-note">items this week</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="feed-saved">0s</div>
+              <div class="stat-label">Time saved</div>
+              <!-- "estimate" is the truth: the figure is a count multiplied by
+                   an assumed 30 seconds. See SECONDS_PER_HIDDEN_ITEM in
+                   packages/core/src/feeds/score.ts. -->
+              <div class="stat-note">estimate, 30s per item</div>
+            </div>
           </div>
-        </div>
+          <p class="score" id="feed-score"></p>
 
-        <div class="eyebrow">Focus session</div>
-        <div class="card">
-          <div class="field" id="feed-session-idle">
-            <label class="field-label" for="feed-session-minutes">Length</label>
-            <select class="picker" id="feed-session-minutes"></select>
-            <button type="button" class="mini primary" id="feed-session-start">Start</button>
-          </div>
-          <div class="field" id="feed-session-live" hidden>
-            <span class="field-label" id="feed-session-left"></span>
-            <button type="button" class="mini" id="feed-session-stop">Stop</button>
-          </div>
-        </div>
+          <div class="eyebrow">Quick filters</div>
+          <div class="rows" id="feed-rules"></div>
 
-        <div class="foot">
-          <button class="ghost" id="feed-all">All feed controls</button>
+          <div class="eyebrow" id="feed-limit-eyebrow">Daily limit</div>
+          <div class="card" id="feed-limit">
+            <div class="field">
+              <label class="field-label" for="feed-limit-minutes">Minutes a day</label>
+              <select class="picker" id="feed-limit-minutes"></select>
+            </div>
+            <p class="meta" id="feed-limit-meta" hidden>
+              <span id="feed-limit-left"></span>
+              <span id="feed-limit-used"></span>
+            </p>
+            <div class="bar" id="feed-limit-bar" role="progressbar" aria-label="Daily limit used" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" hidden>
+              <div class="bar-fill" id="feed-limit-fill"></div>
+            </div>
+          </div>
+
+          <div class="eyebrow">Focus session</div>
+          <div class="card">
+            <div class="field" id="feed-session-idle">
+              <label class="field-label" for="feed-session-minutes">Length</label>
+              <select class="picker" id="feed-session-minutes"></select>
+              <button type="button" class="mini primary" id="feed-session-start">Start</button>
+            </div>
+            <div class="field" id="feed-session-live" hidden>
+              <span class="field-label" id="feed-session-left"></span>
+              <button type="button" class="mini" id="feed-session-stop">Stop</button>
+            </div>
+          </div>
+          <div class="foot">
+            <button type="button" class="ghost" id="feed-all">All feed controls</button>
+          </div>
         </div>
-      </div>
+      </details>
 
       <div class="foot">
-        <button class="ghost" id="reset">Reset this site</button>
-        <button class="ghost" id="settings">Settings</button>
+        <button type="button" class="ghost when-on when-page" id="reset">Reset this site</button>
+        <button type="button" class="ghost" id="settings">Settings</button>
       </div>
-      <div class="foot">
-        <button class="ghost" id="power">Turn off on this site</button>
-      </div>
-      <div class="status" role="status" aria-live="polite" id="status">On this page</div>
+      <p class="status" role="status" aria-live="polite" id="status">On this page</p>
     </div>
     <script src="popup.js"></script>
   </body>

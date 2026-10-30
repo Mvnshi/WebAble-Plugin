@@ -1,6 +1,7 @@
 /**
- * Popup logic. Drives the active tab's in-page panel through the content
- * script's message protocol. The profile list comes from @webable/core, so the
+ * Popup logic. Drives the active tab through the content script's message
+ * protocol: search, the four big actions, suggestions for the page, quick
+ * switches and profiles. The profile list comes from @webable/core, so the
  * popup, the panel, and the docs all show the same single source of truth.
  *
  * The feed section is the exception: it does not send messages at all. The
@@ -10,7 +11,8 @@
  * reach exactly one tab, which is the wrong shape for a rule that is not about
  * a tab.
  */
-import { PROFILES, chromeStorageAdapter } from '@webable/core';
+import { PROFILES, FEATURE_MAP, chromeStorageAdapter, type Engine } from '@webable/core';
+import { parseIntent, rank, catalogue, describeIntent, type Command, type Insight, type Intent } from '@webable/power';
 import {
   PLATFORM_LABELS,
   SCOPES,
@@ -61,18 +63,51 @@ function send(type: string, extra: Record<string, unknown> = {}, cb?: (r: unknow
   });
 }
 
-// Render profile buttons from the shared registry.
-const grid = $('profiles');
+/**
+ * The popup's own copy of what the tab is doing. Filled by WEBABLE_GET_STATE;
+ * until it answers, everything reads as off rather than guessed.
+ */
 let activeProfile: string | null = null;
+let enabled = true;
+let host = 'this site';
+let count = 0;
+let active = new Set<string>();
+let reachable = false;
+
+/** Ask the tab to do something, then let the person see it happen there. */
+function runInTab(intent: Intent, close = true): void {
+  send('WEBABLE_RUN_INTENT', { intent }, () => {
+    refreshState();
+  });
+  if (close) window.close();
+}
+
+function refreshState(): void {
+  send('WEBABLE_GET_STATE', {}, (res) => adoptState(res as TabState | undefined));
+}
+
+interface TabState {
+  activeProfile?: string | null;
+  count?: number;
+  host?: string;
+  enabled?: boolean;
+  active?: string[];
+}
+
+/* ---- profiles ----------------------------------------------------------- */
+
+const grid = $('profiles');
 function renderProfiles() {
   grid.innerHTML = '';
   for (const p of PROFILES) {
     const b = document.createElement('button');
+    b.type = 'button';
     b.className = 'profile';
     b.setAttribute('aria-pressed', String(activeProfile === p.id));
     b.innerHTML = `<div class="profile-name"></div><div class="profile-desc"></div>`;
     (b.querySelector('.profile-name') as HTMLElement).textContent = p.label;
     (b.querySelector('.profile-desc') as HTMLElement).textContent = p.description;
+    b.title = p.description;
     b.addEventListener('click', () => {
       send('WEBABLE_APPLY_PROFILE', { id: p.id });
       window.close();
@@ -81,6 +116,207 @@ function renderProfiles() {
   }
 }
 renderProfiles();
+
+/* ---- quick tools -------------------------------------------------------- */
+
+/**
+ * The eight tools people reach for most, as switches with their real state.
+ * Chosen for breadth over depth: one each for brightness, reading, size,
+ * type, motion, clutter, and the two annoyances everybody shares.
+ */
+const QUICK_TOOLS = ['darkMode', 'readerMode', 'fontSize', 'dyslexiaFont', 'stopAnimations', 'hideDistractions', 'cookieKill', 'popupKill'];
+const toolButtons = new Map<string, HTMLButtonElement>();
+function renderTools(): void {
+  const wrap = $('tools');
+  wrap.innerHTML = '';
+  for (const id of QUICK_TOOLS) {
+    const f = FEATURE_MAP.get(id);
+    if (!f) continue;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tool';
+    b.setAttribute('aria-pressed', String(active.has(id)));
+    b.innerHTML = '<span class="led" aria-hidden="true"></span><span></span>';
+    (b.lastElementChild as HTMLElement).textContent = f.meta.label;
+    b.title = f.meta.description;
+    b.addEventListener('click', () => {
+      const on = !active.has(id);
+      if (on) active.add(id);
+      else active.delete(id);
+      b.setAttribute('aria-pressed', String(on));
+      $('status').textContent = `${f.meta.label} ${on ? 'on' : 'off'}`;
+      // Stays open: a switch grid is somewhere people flip two or three things.
+      runInTab({ kind: 'toggle', feature: id, on }, false);
+    });
+    toolButtons.set(id, b);
+    wrap.appendChild(b);
+  }
+}
+renderTools();
+
+/* ---- suggestions -------------------------------------------------------- */
+
+function renderInsights(list: Insight[]): void {
+  const wrap = $('suggest');
+  wrap.innerHTML = '';
+  const top = list.slice(0, 3);
+  $('suggest-wrap').hidden = top.length === 0;
+  for (const i of top) {
+    const card = document.createElement('div');
+    card.className = 'tip';
+    card.innerHTML = '<div class="tip-text"><div class="tip-title"></div><div class="tip-why"></div></div><button type="button"></button>';
+    (card.querySelector('.tip-title') as HTMLElement).textContent = i.title;
+    (card.querySelector('.tip-why') as HTMLElement).textContent = i.why;
+    const btn = card.querySelector('button') as HTMLButtonElement;
+    btn.textContent = i.action;
+    btn.addEventListener('click', () => {
+      card.classList.add('is-done');
+      btn.textContent = 'Done';
+      btn.disabled = true;
+      $('status').textContent = `${i.action}: done. Undo it from the page or the panel.`;
+      runInTab(i.fix, false);
+    });
+    wrap.appendChild(card);
+  }
+}
+
+/* ---- the four big actions ----------------------------------------------- */
+
+function openReport(): void {
+  withActiveTab((tabId) => {
+    chrome.tabs.create({ url: chrome.runtime.getURL(`report.html?tab=${tabId}`) });
+    window.close();
+  });
+}
+
+$('act-bar').addEventListener('click', () => {
+  send('WEBABLE_COMMAND_BAR');
+  window.close();
+});
+$('act-hints').addEventListener('click', () => {
+  send('WEBABLE_HINTS');
+  window.close();
+});
+$('act-read').addEventListener('click', () => runInTab({ kind: 'action', id: 'readAloud' }));
+$('act-check').addEventListener('click', openReport);
+
+/* ---- search ------------------------------------------------------------- */
+
+/**
+ * The command bar's search, in the popup. Same phrasebook, same ranking, same
+ * catalogue; it runs the result in the tab, so a person who never learns the
+ * keyboard shortcut still gets "type what you need".
+ *
+ * The catalogue reads engine state for on/off labels. The popup has no engine,
+ * only the tab's answer to WEBABLE_GET_STATE, so it lends the catalogue a
+ * read-only stand-in built from that answer.
+ */
+function stateView(): Engine {
+  const settings: Record<string, { active: boolean }> = {};
+  for (const id of active) settings[id] = { active: true };
+  return { getState: () => ({ settings, activeProfile, ui: { theme: 'auto' }, apiKey: '' }) } as unknown as Engine;
+}
+
+let results: Command[] = [];
+let selected = 0;
+const input = $('q') as HTMLInputElement;
+const list = $('results');
+
+function search(q: string): void {
+  if (!q.trim()) {
+    results = [];
+  } else {
+    const engine = stateView();
+    const intents = parseIntent(q)
+      .map((i) => describeIntent(engine, i))
+      .filter((c): c is Command => !!c)
+      .slice(0, 3);
+    const found = rank(q, catalogue(engine)).slice(0, 8);
+    const seen = new Set<string>();
+    results = [...intents, ...found].filter((c) => {
+      const k = JSON.stringify(c.intent);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
+  selected = 0;
+  paintResults(q);
+}
+
+function paintResults(q: string): void {
+  const open = !!q.trim();
+  list.hidden = !open;
+  $('home').hidden = open;
+  input.setAttribute('aria-expanded', String(open));
+  list.innerHTML = '';
+  if (!open) return;
+  if (!results.length) {
+    const li = document.createElement('li');
+    li.className = 'results-empty';
+    li.setAttribute('role', 'presentation');
+    li.textContent = 'No match. Try "too bright", "bigger text" or "read to me". Press Enter to search in the page.';
+    list.appendChild(li);
+    return;
+  }
+  results.forEach((c, i) => {
+    const li = document.createElement('li');
+    li.className = 'result';
+    li.id = `r-${i}`;
+    li.setAttribute('role', 'option');
+    li.setAttribute('aria-selected', String(i === selected));
+    li.innerHTML = '<span class="result-title"></span><span></span>';
+    (li.firstElementChild as HTMLElement).textContent = c.title;
+    const tail = li.lastElementChild as HTMLElement;
+    if (c.meta === 'On' || c.meta === 'Active') {
+      tail.className = 'result-on';
+      tail.textContent = c.meta;
+    } else {
+      tail.className = 'result-group';
+      tail.textContent = c.group === 'Best match' ? 'Best match' : c.group.replace(/s$/, '');
+    }
+    li.addEventListener('click', () => choose(i));
+    list.appendChild(li);
+  });
+  input.setAttribute('aria-activedescendant', `r-${selected}`);
+}
+
+function choose(i: number): void {
+  const c = results[i];
+  if (!c) {
+    // Nothing matched: hand the words to the command bar on the page, which
+    // can also search headings, links and the site itself.
+    send('WEBABLE_COMMAND_BAR');
+    window.close();
+    return;
+  }
+  if (c.intent.kind === 'action' && c.intent.id === 'siteCheck') return openReport();
+  if (c.intent.kind === 'action' && c.intent.id === 'openSettings') {
+    chrome.runtime.openOptionsPage();
+    window.close();
+    return;
+  }
+  runInTab(c.intent);
+}
+
+input.addEventListener('input', () => search(input.value));
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (!results.length) return;
+    selected = (selected + (e.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length;
+    paintResults(input.value);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    choose(selected);
+  } else if (e.key === 'Escape' && input.value) {
+    e.preventDefault();
+    input.value = '';
+    search('');
+  }
+});
+
+/* ---- the off switch ----------------------------------------------------- */
 
 /**
  * The off switch, and the only surface that is guaranteed to be reachable when
@@ -91,49 +327,74 @@ renderProfiles();
  * tab whatever the content script is doing, which is exactly what makes turning
  * it off a safe thing to do rather than a one-way door.
  */
-let enabled = true;
-function paint(host: string, count: number) {
+function paint() {
   document.body.setAttribute('data-off', String(!enabled));
-  $('power').textContent = enabled ? 'Turn off on this site' : `Turn on for ${host}`;
+  const power = $('power');
+  power.setAttribute('aria-checked', String(enabled));
+  power.setAttribute('aria-label', `WebAble on ${host}`);
+  $('power-label').textContent = enabled ? 'On' : 'Off';
+  const site = $('site');
+  site.textContent = '';
+  const b = document.createElement('b');
+  b.textContent = host;
+  site.append(b, document.createTextNode(enabled ? (count ? `  ·  ${count} tool${count > 1 ? 's' : ''} on` : '  ·  nothing changed yet') : '  ·  off here'));
   $('status').textContent = !enabled
     ? `Off on ${host}`
     : count
       ? `${count} tool${count > 1 ? 's' : ''} active on this site`
       : 'No tools active on this site';
+  for (const [id, btn] of toolButtons) btn.setAttribute('aria-pressed', String(active.has(id)));
 }
 
-let host = 'this site';
-let count = 0;
-
-// Reflect current state from the active tab.
-send('WEBABLE_GET_STATE', {}, (res) => {
-  const r = res as
-    | { activeProfile?: string | null; count?: number; host?: string; enabled?: boolean }
-    | undefined;
+function adoptState(r: TabState | undefined): void {
   if (!r) {
     // No content script answered: a chrome:// page, the web store, a PDF
-    // viewer. Nothing to turn on or off, so do not offer to.
-    $('status').textContent = 'Open a regular web page to use the tools';
-    $('power').setAttribute('hidden', '');
+    // viewer, or a tab opened before WebAble was installed.
+    reachable = false;
+    document.body.setAttribute('data-blank', 'true');
+    $('site').textContent = 'Not available on this page';
+    $('status').textContent = 'Open a regular web page to use the tools. Tabs opened before WebAble was installed need a reload.';
     return;
   }
+  reachable = true;
+  document.body.removeAttribute('data-blank');
   activeProfile = r.activeProfile ?? null;
   host = r.host || host;
   count = r.count || 0;
+  active = new Set(r.active || []);
   // `enabled` is absent from a content script left over from an older build;
   // treat that as running, which is what it is.
   enabled = r.enabled !== false;
   renderProfiles();
-  paint(host, count);
+  paint();
   adoptTabScope(r.host || '');
+}
+
+// Reflect current state from the active tab, then ask it what it noticed.
+send('WEBABLE_GET_STATE', {}, (res) => {
+  adoptState(res as TabState | undefined);
+  if (reachable && enabled) send('WEBABLE_INSIGHTS', {}, (r) => renderInsights(((r as { insights?: Insight[] }) || {}).insights || []));
 });
+
+// The shortcut as the browser actually bound it, which may not be the default.
+try {
+  chrome.commands?.getAll?.((cmds: Array<{ name?: string; shortcut?: string }>) => {
+    const k = cmds.find((c) => c.name === 'command-bar')?.shortcut;
+    const kbd = $('bar-key');
+    if (k) kbd.textContent = k;
+    else kbd.hidden = true;
+  });
+} catch {
+  /* not in an extension context */
+}
 
 $('power').addEventListener('click', () => {
   const next = !enabled;
   send('WEBABLE_SET_ENABLED', { on: next }, () => {
     enabled = next;
     if (!next) count = 0;
-    paint(host, count);
+    paint();
+    if (next) setTimeout(refreshState, 400);
   });
 });
 
@@ -145,7 +406,9 @@ $('reset').addEventListener('click', () => {
   send('WEBABLE_RESET');
   activeProfile = null;
   count = 0;
+  active = new Set();
   renderProfiles();
+  paint();
   $('status').textContent = 'Reset on this site';
 });
 $('settings').addEventListener('click', () => {
@@ -202,10 +465,13 @@ const ruleButtons = new Map<QuickRule, HTMLButtonElement>();
 const platformOf = (id: ScopeId): PlatformId | null => (id === 'global' ? null : id);
 
 /** Default the scope to the platform of the tab the popup was opened over. */
+let onFeedSite = false;
 function adoptTabScope(siteKey: string): void {
   if (scopePicked || !siteKey) return;
   const adapter = platformFor(siteKey);
   if (!adapter) return;
+  onFeedSite = true;
+  if (mounted) ($('feed') as HTMLDetailsElement).open = true;
   scope = adapter.id;
   paintFeed();
 }
@@ -374,6 +640,7 @@ function mountFeed(): void {
   mounted = true;
   paintFeed();
   $('feed').hidden = false;
+  if (onFeedSite) ($('feed') as HTMLDetailsElement).open = true;
 
   // The countdown and the limit line are the only things on this surface that
   // move without anybody pressing anything, and a timer that only updates when

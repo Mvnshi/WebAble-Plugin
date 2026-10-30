@@ -16,8 +16,11 @@ import { runSiteCheck, highlightFinding } from '@webable/power/sitecheck';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const chrome: any;
 
-/** Preferences for the power layer. Synced: they are about the person, not the device. */
-export const POWER_KEY = 'power:v1';
+/**
+ * Preferences for the power layer. Synced: they are about the person, not the
+ * device. The key starts with "webable" so Clear all data in Settings finds it.
+ */
+export const POWER_KEY = 'webable:power';
 export interface PowerPrefs {
   hintMode: HintMode;
   /** Whether the in-page fallback shortcuts listen. See listenForShortcuts. */

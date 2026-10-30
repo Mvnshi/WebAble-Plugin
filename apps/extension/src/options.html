@@ -77,6 +77,23 @@
       </div>
 
       <div class="card">
+        <h2>Keyboard and power tools</h2>
+        <p class="note">The command bar (<kbd id="k-bar">Ctrl+Shift+K</kbd>) takes plain words: "too bright", "text 150%", "go to pricing". Click hints (<kbd id="k-hints">Alt+Shift+H</kbd>) label every link and button so you can click by typing. Both work on every site.</p>
+        <div class="keyrow">
+          <label for="hint-mode" style="align-self:center;font-size:13px;color:var(--mute)">Click hint labels</label>
+          <select id="hint-mode" class="btn-ghost" style="flex:1;height:40px;padding:0 12px">
+            <option value="letters">Letters (fastest on a keyboard)</option>
+            <option value="numbers">Numbers, type words to filter (best for voice control)</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="page-keys" checked /> Also listen for the shortcuts inside pages, in case the browser could not bind them</label>
+        </div>
+        <div class="row" style="margin-top:12px"><button class="btn-ghost" id="shortcuts">Change keyboard shortcuts</button></div>
+        <div class="status" role="status" aria-live="polite" id="power-status"></div>
+      </div>
+
+      <div class="card">
         <h2>AI assist (optional)</h2>
         <p class="note">Add a Google Gemini API key to enable alt-text generation, plain-language rewrites, page summaries, and Guide. The key is stored on this device only (chrome.storage.local), never synced to your other browsers, and is sent only to Google. WebAble has no server to log it to. If you use WebAble on more than one machine you will need to paste the key on each. Get a key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com</a>.</p>
         <div class="keyrow">
