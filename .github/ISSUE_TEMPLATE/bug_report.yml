@@ -10,7 +10,8 @@ body:
     attributes:
       label: Where did it happen?
       options:
-        - The embeddable website widget (dist/webable.js)
+        - The embeddable website widget (dist/widget.js)
+        - The command bar, click hints, or Site Check
         - The browser extension
         - Not sure
     validations:

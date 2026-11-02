@@ -1,232 +1,279 @@
 <div align="center">
 
+<img src="apps/extension/icons/icon128.png" width="88" height="88" alt="" />
+
 # WebAble
 
-### Free, open-source accessibility for the whole web.
+### The web, adapted to you.
 
-**Adapt any website to you** — reading, vision, motor, and cognitive tools that
-follow the user, not the site. Add it to your website with **one line**, or
-install the browser extension and carry your settings everywhere.
+Type what you need in plain words. Click anything without a mouse. Get the
+page read to you, cleaned up, enlarged, darkened, or checked, on every site you
+visit. Free, open source, and private by default.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-2F80FF.svg)](LICENSE)
-![Dependencies: none](https://img.shields.io/badge/dependencies-0-1FCB8A.svg)
-![Widget size](https://img.shields.io/badge/widget-~35%20KB%20gzipped-1FCB8A.svg)
-![PRs welcome](https://img.shields.io/badge/PRs-welcome-A574FF.svg)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2F80FF.svg)](LICENSE)
+![Manifest V3](https://img.shields.io/badge/Chrome-Manifest%20V3-1FCB8A.svg)
+![Tests](https://img.shields.io/badge/tests-431%20unit%20%C2%B7%2048%20browser-1FCB8A.svg)
+![Tracking](https://img.shields.io/badge/tracking-none-A574FF.svg)
 
-**[🌐 webable.cc](https://webable.cc)** · [📖 Embed guide](EMBED.md) · [💬 Discussions](https://github.com/Mvnshi/WebAble-Plugin/discussions) · [💛 Sponsor](https://github.com/sponsors/Mvnshi)
+**[Install](#install-in-a-minute)** · [What it does](#what-it-does) · [Shortcuts](#keyboard-shortcuts) · [Privacy](#privacy) · [For site owners](#for-site-owners) · [Build from source](#build-from-source) · [webable.cc](https://webable.cc)
+
+<img src="docs/screenshots/command-bar.png" alt="The WebAble command bar open over a web page. The person has typed 'this page is too bright' and the best match is 'Turn on Dark mode'." width="880" />
 
 </div>
 
 ---
 
-WebAble is two things that share one engine:
+## Why
 
-- a **website widget** a company drops in with a single `<script>` tag, so
-  **every visitor** gets the toolkit — no install required;
-- a **browser extension** a person installs once, so their accessibility
-  settings travel with them across **every** site.
+Every website is built one way, for everybody. That works until the text is too
+small, the page is too bright, the motion makes you dizzy, the cookie banner
+covers the article, or your hands do not want to use a mouse today.
 
-> Classic accessibility overlays (UserWay, accessiBe, AudioEye) are sold to
-> website owners, run mechanical CSS rules, and were
-> [legally challenged](https://www.ftc.gov/news-events/news/press-releases/2026/01/ftc-takes-action-against-accessibe-deceptive-claims-disabled-users)
-> for claiming AI compliance. **In January 2026 the FTC fined accessiBe
-> $1,000,000.**
->
-> WebAble is different *by construction*. It's **user-side**: it adapts the page
-> for the person who opens it. It does **not** claim to "fix" your site, fake a
-> WCAG badge, cloak content for crawlers, or poison the accessibility tree. The
-> native a11y stack (NVDA, VoiceOver, Voice Control, ZoomText) keeps working.
-> Always.
+Browsers give you a zoom button. Accessibility overlays sell site owners a
+compliance badge. Neither puts **you** in charge of the page in front of you.
 
----
+WebAble does. It is a browser extension that adapts any website to the person
+using it, and it is built around one idea: **you should not need to know what a
+tool is called to use it.** Say "too bright" and the page goes dark. Say "I have
+dyslexia" and the type, spacing and reading aids change together. Say "go to
+pricing" and you are there, with keyboard focus on it. Every change has an Undo.
 
-## Two ways to use WebAble
+It started as an accessibility tool and it still is one, first. It also turns
+out that what helps someone with low vision or a tremor makes everybody else
+faster, so it is built for both.
 
-### 🌐 On your website — one line
+## Install in a minute
 
-```html
-<script src="https://cdn.jsdelivr.net/gh/Mvnshi/WebAble-Plugin@main/dist/webable.js"
-        data-webable defer></script>
-```
+The Chrome Web Store listing is on its way. Until then, it takes about a minute:
 
-A round accessibility button appears in the corner. Visitors open it (or press
-`Ctrl+U`), pick the tools they need, and their choices are remembered next time.
-The stylesheet is bundled into that one file — there is nothing else to add, no
-build step, no dependencies, no account.
+1. **[Download this repository as a ZIP](https://github.com/Mvnshi/WebAble-Plugin/archive/refs/heads/main.zip)** and unzip it.
+2. Open `chrome://extensions` (Edge: `edge://extensions`).
+3. Switch on **Developer mode** (top right).
+4. Click **Load unpacked** and choose the **`extension`** folder inside the unzipped download.
+5. Pin WebAble from the puzzle-piece menu so it is one click away.
 
-Brand it, position it, restrict the toolset, white-label it, wire it to your own
-menu — see **[EMBED.md](EMBED.md)** for the full config and framework recipes
-(React/Next, Vue, WordPress, Shopify, GTM, …).
+A welcome page opens and asks one question: *what would make the web easier for
+you?* Pick what applies; you will see it happen on that page before anything is
+saved.
 
-```html
-<!-- e.g. branded + docked as a right sidebar -->
-<script src="https://cdn.jsdelivr.net/gh/Mvnshi/WebAble-Plugin@main/dist/webable.js"
-        data-webable data-webable-color="#7c3aed" data-webable-layout="sidebar-right" defer></script>
-```
+Works in Chrome, Edge, Brave, Arc, Opera, Vivaldi, and other Chromium browsers.
+Tagged releases also carry a ready-made ZIP under
+[Releases](https://github.com/Mvnshi/WebAble-Plugin/releases).
 
-**Try it now, locally:**
+## What it does
 
-```bash
-npm run serve      # → http://localhost:8000/examples/embed-demo.html
-```
+### The command bar: type what you need
 
-### 🧩 In your browser — the extension
+Press **Ctrl+Shift+K** (**Cmd+Shift+K** on a Mac) on any site and type.
 
-1. Open `chrome://extensions`
-2. Toggle **Developer mode** (top right)
-3. **Load unpacked** → select this folder
-4. Pin **WebAble** and click it (or press `Ctrl+Shift+U`)
+| You type | WebAble does |
+| --- | --- |
+| `too bright` · `hurts my eyes` | Turns on dark mode |
+| `text 150%` · `bigger text` · `I can't read this` | Sets or steps up the text size |
+| `I have dyslexia` · `too much going on` | Applies the dyslexia or ADHD profile |
+| `make it stop moving` | Freezes animation and autoplay |
+| `read this to me` · `stop reading` | Read aloud with your device's voice |
+| `2x` · `play at 1.25` · `louder` | Video speed and volume, for every player on the page |
+| `go to pricing` · `#install` | Jumps to that heading, section or link and moves keyboard focus there |
+| `search for trail boots` | Types into the site's own search box and submits it |
+| `copy a clean link` | Copies the URL with tracking parameters removed |
+| `check this site` | Opens Site Check |
+| `? who wrote this` | Answers from the page (optional AI) |
 
-Your settings persist per-site and follow you across the web.
+The sentence is understood **on your device**: a phrasebook, not a language
+model, so it works on day one with no key, no account and no network, in under
+a millisecond. A request it does not recognise falls back to fuzzy search over
+every tool, profile, heading and link, tolerant of typos and initials (`pip`,
+`drak mode`). If you add an AI key, anything still unmatched can become a
+question about the page.
 
----
+<img src="docs/screenshots/command-bar-goto.png" alt="The command bar in 'go to' mode, listing the page's headings, regions and links." width="720" />
 
-## What's inside
+### Click anything without a mouse
 
-### 21 tools (all working — no stubs)
+Press **Alt+Shift+H**. Every link, button and field you can see gets a short
+label. Type the label and it is clicked; hold **Shift** to open a link in a new
+tab. Two keys to any control, instead of fifty presses of Tab.
 
-| Category | Tools |
-|---|---|
-| **Vision** | Reading Mode · High Contrast (5 modes) · Color Filter (deuter / protan / tritan / achroma · simulate or correct) · Text Size · Force Pinch Zoom · Big Cursor (1–4×) · Reading Ruler · Visible Focus Ring |
-| **Reading** | Dyslexia Font (OpenDyslexic / Lexend / Atkinson Hyperlegible) · Letter & Word Spacing · Read Aloud (Web Speech API) · Hide Images |
-| **Motor** | Click Target Enlarger · Tooltip Pin · Sticky Element Killer · Auto-Scroll |
-| **Cognitive** | Hide Distractions · Stop Animations · Focus Mode |
-| **Privacy** | Cookie Banner Killer · Modal / Popup Killer |
+**Number mode**, set in Settings, labels everything 1, 2, 3 and lets you type
+words to filter ("check" leaves only the controls that say checkout). It is
+built for voice control: "type 14" is a command every dictation system already
+understands.
 
-### 7 profiles (one-click bundles)
+Hints skip anything covered by a modal, reach into shadow DOM, and never fire
+the site's own keyboard shortcuts underneath.
 
-Low Vision · Dyslexia · ADHD Focus · Motor Impaired · Seizure Safe · Senior
-Friendly · Privacy First.
+<img src="docs/screenshots/click-hints.png" alt="Yellow letter labels next to each link, button and field on a page, with a banner reading 'Type a label to click'." width="720" />
 
-### Site Analyzer (extension)
+### Suggestions for the page you are on
 
-A standalone tab that runs **15 WCAG 2.2 heuristic checks** (alt text, form
-labels, vague links, heading order, lang, viewport zoom, ARIA roles, duplicate
-IDs, focus suppression, and more), scores the page 0–100, and for each finding
-gives the WCAG SC, who it hurts, a plain-language fix, and a **Highlight on
-page** button. Export as Markdown or PDF. Honest by design: it says out loud
-that automated tools catch only 30–40% of issues — the rest needs manual testing
-with real assistive tech.
+Click the toolbar button and WebAble tells you what it noticed **on this page**,
+with the one fix for each: a cookie banner over the article, a sign-up wall, a
+bright page while your system is set to dark, body text under 14px, text that
+fails contrast, a 3,000-word article, video playing on its own. Nothing changes
+until you press the button.
 
-### AI features (extension, bring-your-own-key)
+<p>
+<img src="docs/screenshots/popup.png" alt="The WebAble popup: a 'type what you need' box, four big actions, three suggestions for this page, quick tool switches and profiles." width="300" />
+&nbsp;
+<img src="docs/screenshots/popup-dark.png" alt="The same popup in dark mode." width="300" />
+</p>
 
-Add a Gemini key in Settings (it stays in `chrome.storage.local` and only ever
-talks to Google): **Plain-Language Summary**, **Smart Page Q&A**,
-**Context-Aware Alt Text** (image **+** surrounding paragraph **+** page title —
-the thing pixel-only auto-alt can't do), and **OCR**. The widget ships
-accessibility-first; AI for embedded sites is an opt-in proxy on the roadmap
-(see [EMBED.md](EMBED.md)).
+### 43 tools and 8 one-click profiles
 
----
+Everything from the original WebAble, rebuilt on one shared engine:
 
-## Honest take on SEO, GEO & reach
+- **Reading:** reader mode, text size, readable and dyslexia fonts (OpenDyslexic, Lexend, Atkinson), line/letter/word spacing, bionic reading, reading guide, reading mask, focus mode, magnifier, highlight-to-explain, double-click dictionary
+- **Colour:** dark mode, invert, high contrast, saturation, colour-blindness filters (assist or simulate), your own colours
+- **Motion and focus:** stop animations, mute media, hide images, hide distractions, visible focus ring, big cursor, bigger click targets, pinned tooltips
+- **Power tools:** hide cookie banners, dismiss pop-ups, break sign-up walls, unpin sticky bars, expand all, playback speed, volume boost, picture-in-picture, auto-scroll, unlock copy and right-click, force pinch-zoom, fix-this-site element hiding, clean copy
+- **Feed guard** for YouTube, TikTok, Instagram and X: hide Shorts, clickbait, sponsored posts and comments, sort the feed into 37 categories, daily limits and focus sessions
+- **Profiles:** Seizure safe, Vision impaired, ADHD friendly, Cognitive / dyslexia, Keyboard / motor, Senior friendly, Privacy first, Screen-reader assist
 
-You'll see overlay vendors promise that a widget will boost your search rankings.
-We won't, because it isn't true, and that kind of claim is exactly what got the
-category fined. Here's what's actually real:
+Settings are remembered per site, and you can save a set as your default for
+every site. Read aloud uses the voices already on your device. Optional AI
+(summaries, plain-language rewrites, alt text, questions about a page, an
+on-page guide that points at what to click) uses your own free Google Gemini key
+or a WebAble Pro subscription.
 
-- **It won't hurt your Core Web Vitals.** The widget is tiny, `defer`-loaded, and
-  causes no layout shift — so it doesn't drag down the performance signals that
-  *do* affect SEO.
-- **No cloaking, no spam markup.** Nothing is shown to crawlers that isn't shown
-  to people, so there's nothing to penalize.
-- **It signals genuine accessibility investment** and widens your real audience —
-  ~1 in 6 people live with a disability. Reach and conversions come from actually
-  serving them, not from a badge.
+<img src="docs/screenshots/panel.png" alt="The full WebAble panel open beside an article, showing profile cards and a category rail." width="720" />
 
-Real ranking and generative-engine (GEO) gains come from accessible,
-well-structured content. WebAble encourages that; it never fakes it.
+### Site Check
 
----
+One click, any page, a report built **in your own browser** from the page as it
+actually rendered. That is the difference from most free checkers, which fetch
+the HTML and guess:
 
-## How it's built
+- **Accessibility:** colour contrast measured from computed styles, unnamed
+  buttons and links, unlabelled fields, alt text, headings, landmarks, zoom
+  blocking, WCAG 2.2 target size, focus traps in hidden content, and more
+- **Search:** title, description, indexability, canonical, mobile viewport,
+  social cards, HTTPS
+- **AI visibility:** whether `robots.txt` lets GPTBot, ClaudeBot, PerplexityBot
+  and Google-Extended in, `llms.txt`, structured data, quotable content
+- **Speed:** LCP, CLS and TTFB from this visit's own performance timeline, page
+  weight, element count, third-party scripts
 
-```
-core/webable-engine.js      Shared engine — 21 tools + 7 profiles. Pure DOM/CSS, zero deps.
-                            Source of truth for behaviour; powers BOTH products.
-embed/webable.embed.js      Website-widget runtime (launcher, panel, config, localStorage).
-embed/webable.embed.css     Embed-only styles on top of the shared design system.
-content.css                 Design system + every page-mod overlay. Shared.
-dist/webable.js             Built one-file widget (engine + runtime + inlined CSS). ~35 KB gz.
-scripts/                    Zero-dep build, headless smoke test, static dev server.
-examples/embed-demo.html    A real page with the widget embedded — the live try-it.
+Every finding says **who it affects** and **how to fix it**, has a *Show on page*
+button, and exports as Markdown or PDF. It also says plainly that automated
+checks find roughly a third of accessibility problems; a high score means
+nothing obvious is wrong, not that a site is compliant.
 
-content.js · popup.* · options.* · analyzer.* · background.js · manifest.json
-                            The Chrome (MV3) browser extension.
-backend/                    Optional Node/Stripe AI proxy for the extension's Pro mode.
-BUILD.md                    React + TypeScript + Vite migration plan.
-```
-
-```bash
-npm run build      # build dist/  (run after editing core/ or embed/)
-npm run smoke      # headless engine test — verifies the engine ↔ CSS contract
-npm run check      # syntax-check engine, runtime, and bundle
-npm run serve      # serve the demo
-```
-
-The engine is intentionally framework-free and never builds UI, so both the
-extension and the widget drive the *same* tested logic. New to the code? Adding a
-tool is ~15 lines — see **[CONTRIBUTING.md](CONTRIBUTING.md)**.
-
----
-
-## Privacy & security
-
-- **Zero telemetry.** The accessibility tools make **zero** network calls. Audit
-  it: `grep -rin "fetch\|XMLHttpRequest" core embed`.
-- **Your settings stay on your device** — `localStorage` for the widget,
-  `chrome.storage.local` for the extension. Shared with no one.
-- **One optional request:** dyslexia/reading fonts (Lexend, Atkinson,
-  OpenDyslexic) lazy-load from a CDN *only when a font tool is turned on*.
-- **BYOK AI.** Gemini keys live locally and go straight to Google. We never
-  proxy, log, or train on a token.
-- **Doesn't poison assistive tech.** WebAble never sets `aria-hidden` on
-  focusable nodes, overrides `role`, or steals focus.
-
----
+<img src="docs/screenshots/site-check.png" alt="The Site Check report: an overall score ring, four pillar scores, measured vitals, and a list of findings." width="880" />
 
 ## Keyboard shortcuts
 
-- `Ctrl+U` — toggle the panel
-- `Ctrl+Shift+U` — global toggle (extension)
-- `Ctrl+Shift+R` — read selection / page aloud (extension)
-- `Ctrl+Shift+P` — pin the hovered tooltip
-- `Esc` — close the panel
+| Keys | What |
+| --- | --- |
+| **Ctrl+Shift+K** (Mac **Cmd+Shift+K**) | Command bar |
+| **Alt+Shift+H** | Click hints |
+| **Ctrl+Shift+U** (Mac **Cmd+Shift+U**) | The full panel |
+| `#` in the command bar | Go to a heading, section or link |
+| `?` in the command bar | Ask about the page |
+| **Shift+Enter** on a link result | Open it in a new tab |
 
----
+Change any of them at `chrome://extensions/shortcuts`. If another extension
+already holds a key, the browser leaves it unbound without saying so; WebAble
+also listens inside the page so the defaults keep working, and the welcome page
+tells you if anything was not bound.
 
-## Roadmap
+## Who it is for
 
-- **AI for the widget** via a self-hosted proxy (`data-webable-ai-endpoint`) so
-  embedded sites get summaries/alt-text with the key server-side.
-- **Internationalization** — a strings map + `data-webable-locale`.
-- **Self-hosted fonts** option (`data-webable-fonts="off"`) for zero third-party
-  requests.
-- **More tools** — line-focus mask, link underliner, mute-all-media.
-- **React + TypeScript + Vite** migration of the extension (see `BUILD.md`).
+- **Low vision:** text size that reflows, high contrast, dark mode, magnifier, big cursor, a focus ring you cannot miss
+- **Dyslexia and reading difficulty:** Lexend or OpenDyslexic, roomier spacing, reading guide, reader mode, read aloud, plain-language rewrites
+- **ADHD and attention:** reader mode, hide distractions, reading mask, focus mode, feed guard, no autoplay
+- **Motor and keyboard users:** click hints, bigger targets, visible focus, "go to" navigation that moves focus
+- **Voice control users:** number hints, and a command bar that takes sentences
+- **Vestibular disorders, migraine, photosensitivity:** stop animations, Seizure safe, dark mode, saturation
+- **Older adults:** the Senior friendly profile, and a welcome page that asks in plain words
+- **Everyone in a hurry:** two keys to any button, "search for", "2x", clean links, no cookie banners
 
-Have an idea or a need we're missing? [Open an issue.](https://github.com/Mvnshi/WebAble-Plugin/issues)
+## Privacy
 
----
+WebAble runs on your device. There is no account, no analytics and no tracking.
+What leaves your browser, and only when you ask for it:
+
+| When | What is sent | To |
+| --- | --- | --- |
+| You use an AI feature with your own key | The text or images you acted on | Google (Gemini), directly |
+| You use an AI feature with WebAble Pro | The same | WebAble's relay, which forwards it to Google and does not store it |
+| You double-click a word | That one word | dictionaryapi.dev |
+| You run Site Check | A request for that site's own `/robots.txt` and `/llms.txt` | The site you are on |
+| You click a link in a Site Check report | The link you clicked (only the deep-scan link includes the page address) | webable.cc or w3.org |
+
+Your AI key is stored only on the device where you typed it and never syncs.
+Full details: [PRIVACY.md](PRIVACY.md).
+
+## Honest by design
+
+WebAble changes pages **for you**. It does not claim to make any website
+accessible or compliant, does not hand out badges, does not show crawlers
+anything different from people, and leaves the page's accessibility tree alone
+so screen readers keep working. Cookie banners are hidden, not answered on your
+behalf, unless you turn that on. The FTC has fined an overlay vendor a million
+dollars for promising otherwise; this project is built on the opposite promise.
+
+## For site owners
+
+**Site Check** shows what is wrong and who it hurts. When you want it fixed in
+the site itself, rather than papered over, WebAble offers
+[fix plans for custom code, Webflow, Framer, Squarespace, WordPress, Wix and Shopify](https://webable.cc/business#pricing),
+human-assisted fix sprints, and a monthly partner for accessibility, SEO, AI
+visibility and growth. Every Site Check report links there after the findings,
+never before them.
+
+**The widget** gives every visitor to your site the same toolkit, with nothing
+to install. One line:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/Mvnshi/WebAble-Plugin@main/dist/widget.js" async></script>
+```
+
+The old `dist/webable.js` address keeps working and now serves the same build.
+Brand colour, position, tool list and the JavaScript API are in
+[EMBED.md](EMBED.md).
+
+## Build from source
+
+You only need this to change the code; the `extension` folder in the repository
+is already built.
+
+```bash
+npm install
+npm run build              # widget into dist/, extension into extension/
+npm run dev:ext            # rebuild the extension on every save
+npm run check              # types, 431 unit tests, 48 real-browser tests, bundle budget, axe audit, house style
+npm run screenshots        # regenerate docs/screenshots from the built extension
+npm run package:extension  # a Chrome Web Store ZIP
+```
+
+The browser tests drive the built extension in a real Chromium with Playwright
+(`npx playwright install chromium` once). CI fails if `extension/` or `dist/`
+drift from the source, so what you download is always what the source builds.
+
+```
+packages/core       the engine: 43 tools, profiles, storage, read aloud, AI providers. No UI.
+packages/ui         the panel, in Preact, mounted in a shadow root
+packages/power      command bar, phrasebook, click hints, page insights, Site Check (extension only)
+packages/companion  streaming protocol for the on-page guide
+apps/extension      the MV3 extension: content script, popup, report, welcome, options
+apps/widget         the one-line website widget (65 KB budget, enforced)
+extension/          built extension, load this folder unpacked
+dist/               built widget, served by jsDelivr
+examples/test-site  fixture pages the browser tests and screenshots run against
+```
+
+More in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Contributing
 
-WebAble gets better every time someone who *relies* on a tool tells us what's
-wrong with it. Bug reports, new tools, translations, docs, screen-reader
-testing — all welcome, and you don't need to be a "real programmer" to help.
-Start with **[CONTRIBUTING.md](CONTRIBUTING.md)** and the
-[good first issues](https://github.com/Mvnshi/WebAble-Plugin/issues).
-
-We hold ourselves to a high bar of respect for disabled users and the people who
-support them — see the [Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Support the project
-
-WebAble is free and will stay free. If it helps you or your users, **starring the
-repo** and **[sponsoring](https://github.com/sponsors/Mvnshi)** directly fund
-ongoing maintenance, testing with real assistive technology, and keeping the
-widget fast and dependency-free.
+Bug reports from people who rely on a tool are the most valuable contribution
+there is, and you do not need to write code to make one. New phrases for the
+command bar are the easiest code contribution: one line in
+`packages/power/src/intents.ts` and one line in its test. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-[MIT](LICENSE) © WebAble contributors. Use it, embed it, fork it, ship it.
+[MIT](LICENSE). Third-party code and fonts, and their licences, are listed in
+[NOTICE](NOTICE).

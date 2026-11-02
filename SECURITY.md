@@ -15,7 +15,7 @@ project and its users safe.
 
 **Please do not open a public GitHub issue for a security problem.** Instead:
 
-- Use GitHub's [private vulnerability reporting](https://github.com/Mvnshi/WebAble-Plugin/security/advisories/new) — the easiest and preferred path.
+- Use GitHub's [private vulnerability reporting](https://github.com/Mvnshi/WebAble-Plugin/security/advisories/new): the easiest and preferred path.
 - Or email the maintainer directly (see GitHub profile).
 
 Include:
@@ -40,7 +40,7 @@ In scope:
 
 Out of scope:
 
-- Vulnerabilities in third-party CDNs we recommend (jsDelivr, Google Fonts) — please
+- Vulnerabilities in third-party CDNs we recommend (jsDelivr, Google Fonts): please
   report those to the respective providers
 - Self-XSS that requires the user to paste attacker-controlled code into devtools
 - Issues that require a compromised browser or operating system

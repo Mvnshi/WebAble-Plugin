@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebAble widget, test harness</title>
+    <style>
+      body { font: 16px/1.6 -apple-system, system-ui, sans-serif; max-width: 720px; margin: 48px auto; padding: 0 20px; color: #0a1b2e; }
+      h1 { font-size: 28px; letter-spacing: -0.02em; }
+      ul { padding-left: 18px; }
+      li { margin: 8px 0; }
+      a { color: #1e40af; }
+      code { background: #f1f3f6; padding: 2px 5px; border-radius: 4px; font-size: 14px; }
+      .note { color: #5b6b80; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <h1>WebAble widget, test harness</h1>
+    <p>Each page embeds the production loader (<code>/widget.js</code>) and lazy-loads the
+      functional chunk (<code>/webable/boot.js</code>). Open one, then use the launcher in the
+      corner. Verify: it mounts, styles stay isolated, the page layout is untouched, features
+      apply and revert, settings persist across reload, and it survives DOM mutations.</p>
+    <ul>
+      <li><a href="/static.html">1 · Plain static HTML</a>, semantic article, images, a form.</li>
+      <li><a href="/tailwind.html">2 · Tailwind page</a>, utility CSS, custom accent + position via <code>data-*</code>.</li>
+      <li><a href="/bootstrap.html">3 · Bootstrap page</a>, heavy framework + aggressive resets (isolation stress test).</li>
+      <li><a href="/dynamic.html">4 · Dynamic / SPA</a>, content injected after load + infinite scroll (MutationObserver test).</li>
+    </ul>
+    <p class="note">Keyboard: <code>Alt</code>+<code>Shift</code>+<code>A</code> toggles the panel. <code>Esc</code> closes it.</p>
+    <script src="/widget.js" data-webable-statement="/index.html" async></script>
+  </body>
+</html>

@@ -1,0 +1,177 @@
+This product includes software from the projects listed below. Each entry
+records the licence and exactly what was taken, which is what those licences
+ask for in return.
+
+--------------------------------------------------------------------------------
+
+farzaa/clicky
+https://github.com/farzaa/clicky
+Read at commit a80fa80.
+
+MIT License
+Copyright (c) 2026 Farza
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+What was taken, and where it lives now:
+
+- The cursor mark's motion model, from `leanring-buddy/OverlayWindow.swift`,
+  now in `apps/desktop/src/motion.ts` and used by
+  `apps/desktop/src/overlay.ts`. Specifically: the follow spring
+  (`response: 0.2, dampingFraction: 0.6`), the mark's resting offset from the
+  pointer (+35, +25), its resting angle (-35 degrees from vertical), the
+  16 ms pointer poll, and the settle behaviour.
+
+- The guide flight, from the same file: a quadratic bezier arc whose control
+  point is the midpoint raised by `min(distance * 0.2, 80)`, a duration of
+  `clamp(distance / 800, 0.6, 1.4)` seconds, smoothstep easing (`3t^2 - 2t^3`),
+  per-frame rotation to the curve's tangent, a `1 + sin(pi * t) * 0.3` scale
+  swell, a glow radius of `8 + (scale - 1) * 20`, the +8/+12 landing offset,
+  the 20 pt edge clamp, and the 100 pt cancel threshold on the return leg.
+
+- The pointing sequence, from the same file: the bubble's 0.5-to-1.0 pop on
+  `response: 0.4, dampingFraction: 0.6`, per-character streaming at a random
+  30-60 ms, the 3 s hold after the last character, and the 0.5 s pause before
+  the mark flies home.
+
+The Swift source itself is not redistributed. What was taken is the motion
+design it encodes, reimplemented for a different renderer.
+
+Nothing else from that repository is used. In particular its pixels-only screen
+reading, its `CGEventTap` push-to-talk and its per-display overlay window are
+deliberately not followed; see `docs/clicky-teardown.md` for why in each case.
+
+--------------------------------------------------------------------------------
+
+Mozilla Readability
+https://github.com/mozilla/readability
+Algorithm read from @mozilla/readability v0.6.0 (Readability.js,
+Readability-readerable.js).
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+
+What was taken, and where it lives now:
+
+- The content-scoring algorithm, now in
+  `packages/core/src/clarity/extract.ts`. Specifically: the
+  `unlikelyCandidates` and `okMaybeItsACandidate` regexes and the `positive` /
+  `negative` class-and-id regexes, copied verbatim; the multi-script comma
+  list; the paragraph score `1 + text.split(commas).length +
+  min(floor(length / 100), 3)`, including the `split().length` off-by-one that
+  makes a comma-free paragraph score 1 rather than 0; the tag base scores
+  (`DIV +5`, `PRE`/`TD`/`BLOCKQUOTE +3`, `ADDRESS`/`OL`/`UL`/`DL`/`DD`/`DT`/
+  `LI`/`FORM -3`, `H1`-`H6`/`TH -5`); the class-and-id weight of plus or minus
+  25 per regex per attribute, scored independently on className and id; the
+  25-character and has-an-ancestor gates; the `DEFAULT_TAGS_TO_SCORE` set,
+  which deliberately omits `h1`; the five-ancestor propagation with dividers
+  1, 2, 6, 9, 12; the link-density penalty `score * (1 - linkDensity)` with
+  same-page anchors counted at 0.3; and the sibling-gathering threshold
+  `max(10, 0.2 * topScore)`.
+
+- The shape of `isProbablyReaderable`'s cheap gate, in the same file.
+
+No Readability source file is redistributed, and the library is not a
+dependency. What was taken is the algorithm, reimplemented against a different
+output: Readability returns cleaned HTML, and `_prepArticle` discards data
+tables, figures split from their captions, code blocks, footnotes, math and
+pull quotes on the way. This emits an ordered list of typed blocks that keeps
+all of those, each carrying a pointer back to the node it came from.
+
+--------------------------------------------------------------------------------
+
+tornikegomareli/Talkify
+https://github.com/tornikegomareli/Talkify
+Product read from the repository README on 2026-08-15. No source file was
+opened, and no Swift was read, adapted or translated.
+
+MIT License
+Copyright (c) 2026 Tornike Gomareli
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+What was taken, and where it lives now:
+
+- The idea that a dictation product's second language belongs on its own key
+  rather than behind a setting, now `dictate_alt_hotkey` and
+  `dictate_alt_locale` in `apps/desktop/src-tauri/src/settings.rs` and the
+  shared branch in `lib.rs`. The reasoning for it is ours; the shape is theirs.
+
+- The feature list, used to decide what was missing here rather than to decide
+  how to build it. Talkify lists optional text cleanup and voice-triggered
+  snippets as planned, and those became
+  `packages/companion/src/dictate.ts`, written from scratch against no
+  reference implementation.
+
+- The six-visual dictation HUD, now `apps/desktop/src/visuals.ts`. The idea of
+  offering a set of named voice visuals rather than one, and the names of four
+  of them (edge glow, aurora, spectrum, ocean), plus the compact and waveform
+  shapes. None of the rendering is theirs: theirs is SwiftUI and Metal shaders,
+  this is canvas 2D, and every curve, palette and falloff here was written from
+  scratch and tuned by rendering it.
+
+- The live preview under the picker in settings, which is their idea and a good
+  one: these styles are defined by how they move with a voice, so a still
+  thumbnail advertises the wrong thing.
+
+- The notch language tag shown while dictating, now `.wa-strip-lang`.
+
+- The shape of Insights, now `apps/desktop/src/usage.ts`: per-day rows of words,
+  seconds and session count, aggregated into a speaking rate, streaks, a
+  seven-day-against-seven momentum figure and a sixteen-week grid. Their file
+  layout was read (`UsageMetrics`, `UsageStore`, `UsageTracker`) and the metric
+  set adopted; the implementation is ours.
+
+  Their best decision here is one of omission, and it is copied deliberately:
+  **they do not compute "time saved".** That number requires assuming a typing
+  speed nobody measured, and for the users this product exists for the
+  assumption is worst exactly where the claim matters most. Speaking rate is
+  observed and is reported; the counterfactual is not knowable from this side
+  and is left unsaid rather than invented.
+
+Nothing else. The push-to-talk state machine, the hands-free lock, the
+on-device transcriber and the insertion path all predate this reading and owe
+Talkify nothing. No Swift was read at any point beyond directory listings and
+two file summaries, and no code was translated: what crossed over is which
+features are worth having and how they should behave.

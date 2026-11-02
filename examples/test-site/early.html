@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>document_start · WebAble test</title>
+    <!-- The very first thing the PAGE can run. A content script declared
+         run_at: document_start is guaranteed to have executed before this;
+         one at document_idle cannot possibly have. So this records whether
+         the engine beat the page, which is the whole flash question. -->
+    <script>
+      window.__WEBABLE_EARLY__ = {
+        readyState: document.readyState,
+        baseFlag: document.documentElement.hasAttribute('data-webable'),
+        host: !!document.getElementById('webable-widget-root'),
+      };
+    </script>
+    <style>body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 40px; }</style>
+  </head>
+  <body>
+    <h1>Did the engine beat the page?</h1>
+    <p>Read <code>window.__WEBABLE_EARLY__</code>.</p>
+  </body>
+</html>

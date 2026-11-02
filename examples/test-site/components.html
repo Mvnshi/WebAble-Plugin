@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WebAble fixture: web components</title>
+<style>
+  body { font: 16px/1.6 -apple-system, system-ui, sans-serif; margin: 0; padding: 24px; }
+  h1 { font-size: 24px; }
+</style>
+</head>
+<body>
+  <h1>A page built out of components</h1>
+  <p id="light">This paragraph is in the light DOM, so it was always treated.</p>
+
+  <!-- Open root: reachable, and everything inside it should be treated the
+       same as the light DOM above. -->
+  <wa-card id="open"></wa-card>
+
+  <!-- Nested: a component inside a component. -->
+  <wa-outer id="outer"></wa-outer>
+
+  <!-- Closed root: unreachable by design. element.shadowRoot is null and there
+       is no way around that, which is the documented limit. -->
+  <wa-closed id="closed"></wa-closed>
+
+  <!-- Appended after load, the way a real component upgrades. -->
+  <div id="slot"></div>
+
+<script>
+  var CARD = '<h2>Card title</h2>' +
+    '<p>Copy inside the component.</p>' +
+    '<a href="#">A link inside the component</a>' +
+    '<button>A button inside the component</button>';
+
+  function open(el, html) {
+    el.attachShadow({ mode: 'open' }).innerHTML = html;
+    return el.shadowRoot;
+  }
+
+  open(document.getElementById('open'), CARD);
+
+  var outer = open(document.getElementById('outer'), '<div><wa-inner></wa-inner></div>');
+  open(outer.querySelector('wa-inner'), CARD);
+
+  document.getElementById('closed').attachShadow({ mode: 'closed' }).innerHTML = CARD;
+
+  // A late component, the common case: components upgrade after first paint,
+  // long after anything has looked for shadow roots.
+  setTimeout(function () {
+    var late = document.createElement('wa-late');
+    late.id = 'late';
+    document.getElementById('slot').appendChild(late);
+    open(late, CARD);
+  }, 300);
+</script>
+</body>
+</html>

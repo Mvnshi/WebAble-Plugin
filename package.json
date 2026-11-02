@@ -1,7 +1,8 @@
 {
   "name": "webable",
-  "version": "2.0.0",
-  "description": "Free, open-source accessibility widget and browser extension. Adapts any website to the user — 21 vision/reading/motor/cognitive tools and 7 one-click profiles. Embed it with one line, or install the extension. User-side by design: never fakes WCAG compliance.",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Free, open-source browser extension and website widget that adapts the web to the person using it: accessibility tools, a keyboard command bar, click hints, smart page fixes, and an honest site checker.",
   "license": "MIT",
   "author": "WebAble contributors",
   "homepage": "https://github.com/Mvnshi/WebAble-Plugin#readme",
@@ -15,48 +16,47 @@
   "keywords": [
     "accessibility",
     "a11y",
+    "browser-extension",
+    "chrome-extension",
+    "command-palette",
+    "keyboard-navigation",
     "wcag",
-    "widget",
-    "embed",
-    "accessibility-widget",
-    "screen-reader",
     "dyslexia",
     "low-vision",
-    "color-blindness",
-    "high-contrast",
-    "text-to-speech",
-    "inclusive-design",
-    "chrome-extension",
-    "ada-compliance"
+    "reader-mode",
+    "productivity",
+    "widget"
   ],
-  "main": "dist/webable.js",
-  "module": "core/webable-engine.js",
-  "unpkg": "dist/webable.js",
-  "jsdelivr": "dist/webable.js",
-  "exports": {
-    ".": "./dist/webable.js",
-    "./engine": "./core/webable-engine.js",
-    "./css": "./dist/webable.css"
-  },
-  "files": [
-    "dist/",
-    "core/",
-    "embed/",
-    "content.css",
-    "EMBED.md",
-    "LICENSE",
-    "README.md"
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "build": "node scripts/build-embed.mjs",
-    "build:embed": "node scripts/build-embed.mjs",
-    "smoke": "node scripts/smoke.mjs",
-    "test": "node scripts/smoke.mjs",
-    "check": "node --check core/webable-engine.js && node --check embed/webable.embed.js && node --check dist/webable.js",
-    "serve": "node scripts/serve.mjs",
-    "prepublishOnly": "node scripts/build-embed.mjs && node scripts/smoke.mjs"
+    "build": "node apps/widget/build.mjs && node apps/extension/build.mjs",
+    "build:widget": "node apps/widget/build.mjs",
+    "build:extension": "node apps/extension/build.mjs",
+    "dev:widget": "node apps/widget/build.mjs --watch",
+    "dev:ext": "node apps/extension/build.mjs --watch",
+    "typecheck": "tsc -p packages/core/tsconfig.json --noEmit && tsc -p packages/companion/tsconfig.json --noEmit && tsc -p packages/ui/tsconfig.json --noEmit && tsc -p packages/power/tsconfig.json --noEmit && tsc -p apps/widget/tsconfig.json --noEmit && tsc -p apps/extension/tsconfig.json --noEmit",
+    "test": "node apps/extension/build.mjs && node scripts/test-core.mjs && node apps/widget/build.mjs && node scripts/smoke-bundle.mjs",
+    "test:extension": "node apps/extension/build.mjs && node scripts/test-extension.mjs",
+    "a11y": "node scripts/a11y-audit.mjs",
+    "gate:bundle": "node apps/widget/build.mjs && node scripts/bundle-gate.mjs",
+    "check": "npm run typecheck && npm run test && npm run test:extension && node scripts/bundle-gate.mjs && node scripts/a11y-audit.mjs && node scripts/no-em-dash.mjs",
+    "demo": "node apps/widget/build.mjs && node scripts/serve-demo.mjs",
+    "package:extension": "node scripts/package-extension.mjs",
+    "screenshots": "node scripts/screenshots.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "4.11.4",
+    "esbuild": "0.24.2",
+    "jsdom": "25.0.1",
+    "playwright": "1.62.1",
+    "preact": "10.25.4",
+    "typescript": "5.7.2"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   }
 }

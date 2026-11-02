@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Tools are small, reversible page adaptations. See `CONTRIBUTING.md` →
-        "Add a new tool" for how they're built — and feel free to open a PR.
+        "Add a new tool" for how they're built: and feel free to open a PR.
   - type: input
     id: name
     attributes:

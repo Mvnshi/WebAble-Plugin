@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Welcome to WebAble</title>
+<style>
+  :root {
+    --bg: #f4f6fb; --card: #ffffff; --ink: #0a1324; --text: #2a364b; --mute: #5f6e84;
+    --line: rgba(10, 19, 36, 0.10); --line-2: rgba(10, 19, 36, 0.18);
+    --accent: #1e40af; --accent-2: #2f80ff; --accent-soft: rgba(47, 128, 255, 0.10);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0a0f19; --card: #111a29; --ink: #f2f6fc; --text: #d0dae8; --mute: #8f9db3; --line: rgba(255,255,255,.08); --line-2: rgba(255,255,255,.18); --accent: #8fb4ff; --accent-2: #5b9bff; --accent-soft: rgba(91,155,255,.14); color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--accent-2); outline-offset: 3px; }
+  [hidden] { display: none !important; }
+  main { max-width: 860px; margin: 0 auto; padding: 48px 20px 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; color: var(--ink); }
+  .brand img { border-radius: 9px; }
+  h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.08; letter-spacing: -0.035em; color: var(--ink); margin: 28px 0 12px; }
+  h1 em { font-style: normal; background: linear-gradient(120deg, #2f80ff, #7c3aed 60%, #10b981); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { font-size: 19px; max-width: 640px; color: var(--text); margin: 0 0 28px; }
+  h2 { color: var(--ink); letter-spacing: -0.02em; font-size: 24px; margin: 0 0 6px; }
+  .sub { color: var(--mute); margin: 0 0 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px; box-shadow: 0 10px 40px -24px rgba(10, 19, 36, .35); }
+  .needs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .need { display: flex; gap: 12px; align-items: flex-start; text-align: left; padding: 14px; border-radius: 14px; border: 1.5px solid var(--line-2); background: var(--bg); }
+  .need:hover { border-color: var(--accent-2); }
+  .need[aria-pressed='true'] { border-color: var(--accent-2); background: var(--accent-soft); }
+  .check { width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--line-2); flex: none; margin-top: 1px; display: grid; place-items: center; }
+  .need[aria-pressed='true'] .check { background: var(--accent-2); border-color: var(--accent-2); }
+  .need[aria-pressed='true'] .check::after { content: ''; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) translate(-1px, -1px); }
+  .need-text { display: flex; flex-direction: column; }
+  .need-title { font-weight: 700; color: var(--ink); }
+  .need-hint { font-size: 14px; color: var(--mute); }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
+  .btn { padding: 13px 20px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--card); font-weight: 700; color: var(--ink); }
+  .btn-primary { background: linear-gradient(135deg, #2f80ff, #1e40af); color: #fff; border-color: transparent; box-shadow: 0 10px 24px -12px rgba(30, 64, 175, .9); }
+  .note { font-size: 14px; color: var(--mute); }
+  .keys { display: grid; gap: 14px; }
+  .key-row { display: grid; grid-template-columns: 210px 1fr; gap: 16px; align-items: center; padding: 16px; border-radius: 16px; background: var(--bg); border: 1px solid var(--line); }
+  kbd { display: inline-block; font: 700 15px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 8px 12px; border-radius: 10px; color: var(--ink); background: var(--card); border: 1px solid var(--line-2); border-bottom-width: 3px; }
+  .key-title { font-weight: 700; color: var(--ink); }
+  .key-try { font-size: 14.5px; color: var(--mute); }
+  .key-try code { font: 600 13.5px ui-monospace, Menlo, monospace; background: var(--accent-soft); color: var(--ink); padding: 1px 6px; border-radius: 6px; }
+  .warn { margin-top: 14px; padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--line-2); font-size: 14.5px; }
+  .pin { display: flex; gap: 14px; align-items: center; margin-top: 20px; padding: 16px; border-radius: 16px; background: var(--accent-soft); color: var(--ink); }
+  .promise { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+  .promise div { padding: 16px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); font-size: 14.5px; }
+  .promise strong { display: block; color: var(--ink); margin-bottom: 4px; }
+  a { color: var(--accent); }
+  @media (max-width: 680px) {
+    .needs, .promise { grid-template-columns: 1fr; }
+    .key-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><img src="icons/icon48.png" width="32" height="32" alt="" /> WebAble</div>
+
+  <section id="step-1" aria-labelledby="step-1-h">
+    <h1 id="step-1-h">The web, <em>adapted to you</em>.</h1>
+    <p class="lede">Every site is built one way for everybody. WebAble changes it to suit the person reading it. Start by telling it what gets in your way. You will see the change on this page as you pick.</p>
+    <div class="card">
+      <h2>What would make the web easier for you?</h2>
+      <p class="sub">Pick any that apply, or none. You can change all of it later, for every site or just one.</p>
+      <div class="needs" id="needs" role="group" aria-label="Things that get in your way"></div>
+      <p class="note" id="preview-note" hidden>This page is a live preview. Nothing is saved until you choose.</p>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="save">Continue without changes</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="step-2" aria-labelledby="step-2-h" hidden>
+    <h1 id="step-2-h">Two shortcuts, <em>the whole web</em>.</h1>
+    <p class="lede" id="saved-note" role="status"></p>
+    <div class="card">
+      <div class="keys">
+        <div class="key-row">
+          <div><kbd data-shortcut="command-bar">Ctrl+Shift+K</kbd></div>
+          <div>
+            <div class="key-title">The command bar: type what you need</div>
+            <div class="key-try">On any site, try <code>too bright</code>, <code>text 150%</code>, <code>read this to me</code>, <code>go to pricing</code>, <code>2x speed</code>, or <code>search for gift cards</code>.</div>
+          </div>
+        </div>
+        <div class="key-row">
+          <div><kbd data-shortcut="click-hints">Alt+Shift+H</kbd></div>
+          <div>
+            <div class="key-title">Click anything without a mouse</div>
+            <div class="key-try">Every link and button gets a short label. Type it to click. Hold Shift to open in a new tab. Voice control users can switch to numbers in Settings.</div>
+          </div>
+        </div>
+        <div class="key-row">
+          <div><kbd data-shortcut="toggle-panel">Ctrl+Shift+U</kbd></div>
+          <div>
+            <div class="key-title">All 43 tools in one panel</div>
+            <div class="key-try">Reader mode, dyslexia fonts, colour filters, read aloud, Site Check, and the rest.</div>
+          </div>
+        </div>
+      </div>
+      <p class="warn" id="unbound" hidden>One or more shortcuts were not set, because another extension or the browser already uses those keys. <button type="button" class="btn" id="open-shortcuts">Choose your own keys</button></p>
+      <div class="pin">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z" /><path d="M12 13v8" /></svg>
+        <div>Pin WebAble so it is one click away: open the puzzle-piece menu next to the address bar and press the pin beside WebAble.</div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="back">Back</button>
+        <button type="button" class="btn" id="open-settings">Settings and AI</button>
+      </div>
+    </div>
+    <div class="promise">
+      <div><strong>Private by default</strong>Everything runs on your device. No account, no tracking, no analytics.</div>
+      <div><strong>Never fakes compliance</strong>WebAble adapts pages for you. It does not claim to make any site accessible.</div>
+      <div><strong>Free and open source</strong>MIT licensed. Read every line on <a href="https://github.com/Mvnshi/WebAble-Plugin" target="_blank" rel="noopener">GitHub</a>.</div>
+    </div>
+  </section>
+</main>
+<script src="welcome.js"></script>
+</body>
+</html>

@@ -1,94 +1,111 @@
 # Contributing to WebAble
 
-Thanks for being here. WebAble is a free, open-source accessibility toolkit, and
-it gets better every time someone who actually relies on a tool tells us what's
-wrong with it. Contributions of every size are welcome — typo fixes, new tools,
-bug reports, translations, docs, a kind word in an issue.
+Thank you for being here. WebAble gets better every time somebody who relies on
+a tool tells us what is wrong with it, so contributions of every size are
+welcome: a bug report, a test with a screen reader, a better sentence, a new
+phrase for the command bar, a new tool.
 
-**You do not need to be a "real programmer" to help.** Filing a clear bug,
-testing with a screen reader, or improving a description is genuinely valuable.
+**You do not need to write code to help.** A clear bug report from someone who
+uses WebAble every day is worth more than most pull requests.
 
 ## Ground rules
 
 - Be kind. See the [Code of Conduct](CODE_OF_CONDUCT.md).
-- Accessibility is the product. A change that looks nicer but is worse for
-  assistive tech is a regression.
-- **We never claim to "make sites compliant."** WebAble is a *user-side* tool. We
-  don't fake WCAG badges, cloak content, or poison the accessibility tree. Keep
-  contributions honest. (See FTC v. accessiBe, 2026.)
+- Accessibility is the product. A change that looks better and is worse with a
+  screen reader, a keyboard, or at 200% text is a regression.
+- **Never claim compliance.** WebAble adapts pages for the person using them.
+  No badges, no "makes your site WCAG compliant", no cloaking, and no changes to
+  the page's accessibility tree that a screen reader would trip over.
+- **Never act on someone's behalf without asking.** No profile or default may
+  answer a consent dialog, submit a form, or click a payment or login control.
+- **Local first.** Nothing leaves the device unless the person asked for a
+  feature that needs it. A new network request needs a line in
+  [PRIVACY.md](PRIVACY.md) and in `apps/extension/STORE_LISTING.md`; a test
+  fails if the listing does not name a host the bundle contacts.
+- No em dashes in code, comments or docs (`scripts/no-em-dash.mjs` checks).
 
-## Project layout
-
-```
-core/webable-engine.js      The shared engine — 21 tools + 7 profiles, pure DOM/CSS,
-                            no dependencies. The single source of truth for behaviour.
-embed/webable.embed.js      The website-widget runtime (launcher + panel + config + storage).
-embed/webable.embed.css     Embed-only style additions on top of content.css.
-content.css                 The design system + all page-mod overlays. Shared by both.
-dist/webable.js             Built single-file widget (engine + runtime + inlined CSS).
-scripts/build-embed.mjs     Zero-dep build → dist/.
-scripts/smoke.mjs           Headless engine test (no browser needed).
-scripts/serve.mjs           Tiny static server for the demo.
-examples/embed-demo.html    A real page with the widget embedded — your manual test bed.
-
-content.js / popup.* / options.* / analyzer.* / background.js / manifest.json
-                            The Chrome (MV3) browser extension.
-backend/                    Optional Node/Stripe AI proxy for the extension's Pro mode.
-```
-
-The **engine** is intentionally framework-free and DOM-injection-free (it never
-builds the panel) so the extension and the widget can both drive it. If you're
-changing *what a tool does*, change the engine. If you're changing *how the
-panel looks/works in the widget*, change the embed runtime.
-
-## Develop
-
-No dependencies to install for the widget — it's vanilla JS.
+## Set up
 
 ```bash
-npm run build     # build dist/webable.js + dist/webable.css
-npm run smoke     # headless engine test (must pass)
-npm run check     # syntax-check engine, runtime, and bundle
-npm run serve     # http://localhost:8000/examples/embed-demo.html
+npm install
+npx playwright install chromium   # once, for the real-browser tests
+npm run dev:ext                   # rebuilds extension/ on save
 ```
 
-Always run `npm run build` after editing `core/` or `embed/` so `dist/` stays in
-sync, and `npm run smoke` before you push.
+Load `extension/` at `chrome://extensions` (Developer mode, Load unpacked) and
+press the reload icon on the WebAble card after each rebuild.
 
-## Add a new tool (worked example)
+## Before you open a pull request
 
-A tool is a tiny `apply(state)` function plus its metadata and CSS. To add one:
+```bash
+npm run check
+```
 
-1. **`core/webable-engine.js`**
-   - add an id to `ALL_TOOLS`
-   - add defaults to `TOOL_DEFAULTS`
-   - add a `TOOL_META` entry (`cat`, `label`, `desc`, `icon`, `hasSettings`)
-   - add `Tools.yourTool = { apply(s) { … toggle a `webable-…` root class or CSS var … } }`
-   - if it has settings, add a case in the embed runtime's `detailControlsFor`
-2. **`content.css`** — add the `html.webable-…` rule(s) your `apply` toggles.
-   Keep every selector in the `.webable-*` / `html.webable-*` namespace.
-3. **`scripts/smoke.mjs`** — add an assertion that toggling it produces the
-   expected class/var.
-4. `npm run build && npm run smoke`, then try it in `examples/embed-demo.html`.
+That runs the type checker over every package, the unit tests, the 48 real
+browser checks, the widget bundle budget, an axe audit of the panel, and the
+house-style gate. Then commit the rebuilt `extension/` and `dist/` with your
+source change: CI rebuilds them and fails if they differ, because those folders
+are what people download.
 
-Keep tools **reversible** (turning them off must fully restore the page) and
-**non-destructive** to the native a11y stack.
+If your change is visible, run `npm run screenshots` and include the updated
+images that changed.
+
+## Where things live
+
+| You want to change | Look in |
+| --- | --- |
+| What a tool does to a page | `packages/core/src/features/` |
+| The panel | `packages/ui/src/` |
+| Command bar, phrasebook, click hints, page suggestions, Site Check | `packages/power/src/` |
+| Popup, report, welcome and options pages, messaging | `apps/extension/src/` |
+| The website widget loader | `apps/widget/src/` |
+
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) explains how they fit together.
+
+## Teach the command bar a new phrase
+
+The easiest code contribution there is. Open `packages/power/src/intents.ts`:
+
+- a sentence that names a **tool** goes in `TOOL_PHRASES`,
+- a sentence that describes a **need** ("my eyes hurt") goes in `NEED_PHRASES`,
+- an **action** ("copy the link") goes in `ACTION_PHRASES`.
+
+Then add the sentence, exactly as a person would type it, to
+`packages/power/test/intents.test.ts` with the change it should make. Phrases
+are matched after filler words ("please", "could you", "I want to") are
+stripped, so write the core of the request.
+
+## Add a Site Check rule
+
+Add it to the right pillar function in `packages/power/src/sitecheck.ts` with
+`add(ctx, {...}, elements)`. Every rule says who it affects (`who`) and how to
+fix it (`fix`), in plain words. If it is a WCAG criterion, set `wcag`. If a
+WebAble tool works around it for visitors, set `workaround`. A rule that cannot
+be measured reliably should be `info`, not `fail`.
+
+## Add a tool
+
+A tool is a `FeatureModule` in `packages/core/src/features/`: metadata (label,
+description, category, icon, keywords, controls), `defaults`, an idempotent
+`apply`, and a `disable` that puts the page back exactly. Register it in
+`packages/core/src/features/index.ts`. It appears in the panel, the popup
+search and the command bar automatically. Then:
+
+- describe it in `apps/extension/STORE_LISTING.md` (a test checks),
+- add a phrase for it in the command bar (a test checks every phrase points at a
+  real tool, but not that every tool has a phrase, so this one is on you),
+- make sure it reverts cleanly: the engine tests toggle every tool on and off.
 
 ## Pull requests
 
-- Branch from `main`, keep PRs focused, describe the user-facing change.
-- Run `npm run build && npm run smoke` and commit the rebuilt `dist/`.
-- Test manually in `examples/embed-demo.html`, and with a screen reader if you
-  can (NVDA/VoiceOver are free).
-- By submitting a PR you agree to license your contribution under the project's
-  [MIT License](LICENSE).
+Keep them focused, describe the change for the person who uses it, and say how
+you tested it. Screenshots help. If it touches the panel or page semantics,
+please try it with a screen reader (NVDA, VoiceOver or Narrator).
 
 ## Good first issues
 
-- New tools (e.g. line-focus mask, link underliner, mute-all-media).
-- Internationalization: the widget strings are English-only today; a strings map
-  + `data-webable-locale` is a great first feature.
-- Self-hosted fonts option (`data-webable-fonts="off"`).
-- More cookie/consent and modal patterns for the killers.
+Look for the `good first issue` label, or pick any of these:
 
-Open an issue to claim one, or just start — we'll help in review.
+- new command bar phrases, especially in the words of people who need them,
+- Site Check rules that explain a problem better than the current text,
+- translations of the panel (`packages/ui/src/i18n.ts`).
